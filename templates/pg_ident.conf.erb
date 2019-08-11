@@ -6,14 +6,10 @@
 # ---------------------------------------------------
 
 <% @default_pg_ident.map do | v | -%>
-<% if v.is_a?(Hash) -%>
-<%= v['mapname'] %>  <%= v['system'] %> <%= v['username'] %>
-<%   end %>
+<% if v.is_a?(Hash) -%><%= v['mapname'] %>  <%= v['system'] %> <%= v['username'] %><% end %>
 <% end %>
 
 <% @pg_ident.map do | v | -%>
-<% if v.is_a?(Hash) -%>
-<%= v['mapname'] %>  <%= v['system'] %> <%= v['username'] %>
-<%   end %>
+<% if v.is_a?(Hash) -%><%= v['mapname'] %>  <%= v['system'] %> <%= v['username'] %><% end %>
 <% end %>
 
