@@ -19,7 +19,7 @@ class postgresql::params {
     'max_stack_depth' => '2MB',
     'dynamic_shared_memory_type' => 'posix',
     'log_line_prefix' => '%m [%p] %q%u@%d ',
-    'log_timezone' => "'Etc/UTC'",
+    'log_timezone' => 'Etc/UTC',
     'stats_temp_directory' => '/var/run/postgresql/9.4-main.pg_stat_tmp',
     'datestyle'=> 'iso, mdy',
     'timezone' => 'Etc/UTC',
