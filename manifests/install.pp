@@ -20,7 +20,7 @@ class postgresql::install {
     owner   => 'postgres',
     group   => 'postgres',
     mode    => '0755',
-    require => $packages
+    require => Package["postgresql-${version}"],
   }
 
 }

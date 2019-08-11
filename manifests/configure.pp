@@ -52,7 +52,7 @@ class postgresql::configure {
   #       command => "pg_createcluster ${version} ${cluster}",
   #       onlyif  => "pg_ctlcluster ${version} ${cluster} status 2>&1 | grep 'not exist'",
   #       path    => ['/bin', '/usr/bin'],
-  #       require => [ $::postgresql::install::packages]
+  #       require => Package["postgresql-${version}"],
   #     } ->
   #
   #     # Config directory
