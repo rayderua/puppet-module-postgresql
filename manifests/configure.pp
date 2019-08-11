@@ -80,7 +80,7 @@ class postgresql::configure {
         $data_directory = "/var/lib/postgresql/${version}/${cluster}"
       }
 
-      $confd_directory = $pg_config["data_directory"]
+      $confd_directory = $pg_config["include_dir"]
       file { [$confd_directory]:
         ensure => directory,
         owner  => 'postgres',
