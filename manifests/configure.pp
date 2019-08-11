@@ -93,6 +93,7 @@ class postgresql::configure {
         refreshonly => true
       }
 
+      notify {"User hba: ${pg_hba}": }
     }
   }
 }
