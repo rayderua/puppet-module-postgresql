@@ -34,15 +34,27 @@ class postgresql::configure {
         'ident_file'        => "/etc/postgresql/${version}/${cluster}/pg_ident.conf",
         'external_pid_file' => "/run/postgresql/${version}-${cluster}.pid",
       }
-
       $default_config = deep_merge($_defaul_config, $path_config);
 
       # add/replace user defined config
-      $user_config = hiera("postgresql::clusters::${cluster}::config", {})
-
+      if has_key($clusterconfig, 'config') {
+        $user_config = $clusterconfig['config']
+      } else {
+        $user_config = {}
+      }
       $pg_config = deep_merge($default_config, $user_config)
-      $pg_hba = hiera("postgresql::clusters::${cluster}::pg_hba", {})
-      $pg_ident = hiera("postgresql::clusters::${cluster}::pg_ident", {})
+
+      if has_key($clusterconfig, 'pg_hba') {
+        $pg_hba = $clusterconfig['pg_hba']
+      } else {
+        $pg_hba = {}
+      }
+
+      if has_key($clusterconfig, 'pg_ident') {
+        $pg_ident = $clusterconfig['pg_ident']
+      } else {
+        $pg_ident = {}
+      }
 
       notify{"hba path: postgresql::clusters::${cluster}::pg_hba": }
       notify{"hba data: ${pg_hba}": }
