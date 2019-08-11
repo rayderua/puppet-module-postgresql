@@ -56,8 +56,6 @@ class postgresql::configure {
         $pg_ident = {}
       }
 
-      notify{"hba path: postgresql::clusters::${cluster}::pg_hba": }
-      notify{"hba data: ${pg_hba}": }
       # Create cluster
       exec { "postgresql create cluster ${version}/${cluster}":
         command => "pg_createcluster ${version} ${cluster}",
@@ -108,7 +106,6 @@ class postgresql::configure {
         refreshonly => true
       }
 
-      notify {"User hba: ${pg_hba}": }
     }
   }
 }
