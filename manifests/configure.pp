@@ -77,13 +77,13 @@ class postgresql::configure {
 
       file { "/etc/postgresql/${version}/${cluster}/pg_hba.conf":
         owner   => 'postgres', group => 'postgres', mode => '0644',
-        content => template("puppet:///modules/postgresql/pg_hba.conf.erb"),
+        content => template("postgresql/pg_hba.conf.erb"),
         notify  => Exec["postgresql reload ${version}/${cluster}"]
       } ->
 
       file { "/etc/postgresql/${version}/${cluster}/pg_ident.conf":
         owner   => 'postgres', group => 'postgres', mode => '0644',
-        content => template("puppet:///modules/postgresql/pg_ident.conf.erb"),
+        content => template("postgresql/pg_ident.conf.erb"),
         notify  => Exec["postgresql reload ${version}/${cluster}"]
       }
 
