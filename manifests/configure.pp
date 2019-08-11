@@ -1,4 +1,5 @@
 class postgresql::configure {
+  contain postgresql::params
 
   $version  = $postgresql::version;
   $clusters = hiera('postgresql::clusters', false)
@@ -7,6 +8,7 @@ class postgresql::configure {
   $default_pg_hba     = $postgresql::params::pg_gba_postgresql_default
   $default_pg_ident   = $postgresql::params::pg_ident_postgresql_default
 
+  notify {"Main HBA Default: ${default_pg_hba}": }
   if ( $clusters == false ) {
     notify{"No clusters configured yet": }
   } else {
