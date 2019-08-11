@@ -1,6 +1,5 @@
 class postgresql::install {
 
-  contain postgresql
   $_version  = $postgresql::version;
   $version = $_version + 0
 

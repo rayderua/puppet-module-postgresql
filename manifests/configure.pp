@@ -1,10 +1,5 @@
 class postgresql::configure {
 
-  contain postgresql
-  contain postgresql::params
-  contain postgresql::install
-
-
   $version  = $postgresql::version;
   $clusters = hiera('postgresql::clusters', false)
   notify{"Postgresql Cluster: ${clusters}": }
