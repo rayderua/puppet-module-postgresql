@@ -66,7 +66,13 @@ class postgresql::configure {
       }
 
       # Data directory
-      file { ["/var/lib/postgresql/${version}/${cluster}"]:
+      if has_key($pg_config, 'data_directory') {
+        $data_directory = $pg_config["data_directory"]
+      } else {
+        $data_directory = "/var/lib/postgresql/${version}/${cluster}"
+      }
+
+      file { [$data_directory]:
         ensure => directory,
         owner  => 'postgres',
         group  => 'postgres',
@@ -107,7 +113,7 @@ class postgresql::configure {
           File["/etc/postgresql/${version}/${cluster}/pg_hba.conf"],
           File["/etc/postgresql/${version}/${cluster}/postgresql.conf"],
           File["/etc/postgresql/${version}/${cluster}/pg_ident.conf"],
-          File["/etc/postgresql/${version}/${cluster}/"],
+          File[$data_directory],
         ],
         before => Exec["postgresql reload ${version}/${cluster}"]
       }
