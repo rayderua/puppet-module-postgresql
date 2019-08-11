@@ -8,7 +8,6 @@ class postgresql::configure {
   $default_pg_hba     = $postgresql::params::pg_gba_postgresql_default
   $default_pg_ident   = $postgresql::params::pg_ident_postgresql_default
 
-  notify {"Main HBA Default: ${default_pg_hba}": }
   if ( $clusters == false ) {
     notify{"No clusters configured yet": }
   } else {
@@ -83,19 +82,17 @@ class postgresql::configure {
         notify  => Exec["postgresql reload ${version}/${cluster}"]
       } ->
 
-      # file { "/etc/postgresql/${version}/${cluster}/pg_ident.conf":
-      #   owner   => 'postgres', group => 'postgres', mode => '0644',
-      #   content => template("postgresql/pg_ident.conf.erb"),
-      #   notify  => Exec["postgresql reload ${version}/${cluster}"]
-      # }
+      file { "/etc/postgresql/${version}/${cluster}/pg_ident.conf":
+        owner   => 'postgres', group => 'postgres', mode => '0644',
+        content => template("postgresql/pg_ident.conf.erb"),
+        notify  => Exec["postgresql reload ${version}/${cluster}"]
+      }
 
       exec { "postgresql reload ${version}/${cluster}":
         command     => "/usr/bin/pg_ctlcluster ${version} ${cluster} reload",
         refreshonly => true
       }
 
-      notify {"HBA Default: ${default_pg_hba}": }
-      notify {"HBA Defined: ${pg_hba}": }
     }
   }
 }
