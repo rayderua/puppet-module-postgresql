@@ -81,6 +81,7 @@ class postgresql::configure {
       }
 
       exec { "create data directory":
+        path => [ "/usr/local/sbin", "/usr/local/bin", "/usr/sbin", "/usr/bin", "/sbin", "/bin" ],
         command => "mkdir -p ${data_directory}",
         unless  => "test -d ${data_directory}",
       }
