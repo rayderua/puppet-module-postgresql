@@ -6,28 +6,30 @@ class postgresql::configure {
 
 
   $version  = $postgresql::version;
-  $clusters = hiera('postgresql::clusters', false)
+  $clusters = hiera('postgresql::clusters', {})
 
   $default_pg_config  = $postgresql::params::config_postgresql_default;
   $default_pg_hba     = $postgresql::params::pg_gba_postgresql_default;
   $default_pg_ident   = $postgresql::params::pg_ident_postgresql_default;
 
-  case $version {
-    9.4: {
-      $_defaul_config = $default_pg_config
-    }
-    11: {
-      $_defaul_config = deep_merge($default_pg_config, { cluster_name => "${version}/${cluster}", 'max_wal_size' => '1GB', 'min_wal_size' => '80MB'})
-    }
-    default:{
-      $_defaul_config = deep_merge($default_pg_config, { cluster_name => "${version}/${cluster}"})
-    }
-  }
-
   if ( $clusters == false ) {
     notify{"No clusters configured yet": }
   } else {
+
     $clusters.each | String $cluster, Hash $clusterconfig | {
+
+      case $version {
+        9.4: {
+          $_defaul_config = $default_pg_config
+        }
+        11: {
+          $_defaul_config = deep_merge($default_pg_config, { cluster_name => "${version}/${cluster}", 'max_wal_size' => '1GB', 'min_wal_size' => '80MB'})
+        }
+        default:{
+          $_defaul_config = deep_merge($default_pg_config, { cluster_name => "${version}/${cluster}"})
+        }
+      }
+
       # add version/cluster variables to config
       $path_config = {
         'data_directory'    => "/var/lib/postgresql/${version}/${cluster}",
