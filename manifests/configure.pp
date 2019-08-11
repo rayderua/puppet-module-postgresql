@@ -91,6 +91,9 @@ class postgresql::configure {
         command     => "/usr/bin/pg_ctlcluster ${version} ${cluster} reload",
         refreshonly => true
       }
+
+      notify {"HBA Default: ${default_pg_hba}": }
+      notify {"HBA Defined: ${pg_hba}": }
     }
   }
 }
