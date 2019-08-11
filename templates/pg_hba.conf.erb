@@ -1,0 +1,20 @@
+#
+# HEADER: Managet by puppet
+#
+# ----------------------------------------------------------------------
+# TYPE  DATABASE        USER            ADDRESS                 METHOD #
+# ----------------------------------------------------------------------
+
+<% @default_pg_config.map do | v | -%>
+<% if v.is_a?(Hash) -%>
+<%= v['type'] %>  <%= v['database'] %> <%= v['type'] %> <%= v['user'] %> <%= v['address'] %> <%= v['method'] %>
+<%   end %>
+<% end %>
+
+
+<% @pg_hba.map do | v | -%>
+<% if v.is_a?(Hash) -%>
+<%= v['type'] %>  <%= v['database'] %> <%= v['type'] %> <%= v['user'] %> <%= v['address'] %> <%= v['method'] %>
+<%   end %>
+<% end %>
+

@@ -1,0 +1,11 @@
+#
+# HEADER: Managet by puppet
+#
+# -----------------------------
+# PostgreSQL configuration file
+# -----------------------------
+
+<% @$pg_config.map do |k,v| -%>
+<%= k %> = <%= v %>
+<% end %>
+
