@@ -77,7 +77,8 @@ class postgresql::configure {
         owner  => 'postgres',
         group  => 'postgres',
         mode   => '0700',
-        require => [ File["/etc/postgresql/${version}"] ]
+        require => [ File["/etc/postgresql/${version}"] ],
+        notify  => Exec["postgresql reload ${version}/${cluster}"],
       }
 
       file { "/etc/postgresql/${version}/${cluster}/postgresql.conf":
