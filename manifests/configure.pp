@@ -80,6 +80,16 @@ class postgresql::configure {
         $data_directory = "/var/lib/postgresql/${version}/${cluster}"
       }
 
+      $confd_directory = $pg_config["data_directory"]
+      file { [$confd_directory]:
+        ensure => directory,
+        owner  => 'postgres',
+        group  => 'postgres',
+        mode   => '0700',
+        notify  => Exec["postgresql reload ${version}/${cluster}"],
+      }
+
+
       exec { "create data directory":
         path => [ "/usr/local/sbin", "/usr/local/bin", "/usr/sbin", "/usr/bin", "/sbin", "/bin" ],
         command => "mkdir -p ${data_directory}",
@@ -130,6 +140,7 @@ class postgresql::configure {
           File["/etc/postgresql/${version}/${cluster}/postgresql.conf"],
           File["/etc/postgresql/${version}/${cluster}/pg_ident.conf"],
           File[$data_directory],
+          File[$confd_directory],
         ],
         before => Exec["postgresql reload ${version}/${cluster}"]
       }
@@ -137,6 +148,14 @@ class postgresql::configure {
       exec { "postgresql reload ${version}/${cluster}":
         command     => "/usr/bin/pg_ctlcluster ${version} ${cluster} reload",
         refreshonly => true,
+        require     => [
+          Package["postgresql-${version}"],
+          File["/etc/postgresql/${version}/${cluster}/pg_hba.conf"],
+          File["/etc/postgresql/${version}/${cluster}/postgresql.conf"],
+          File["/etc/postgresql/${version}/${cluster}/pg_ident.conf"],
+          File[$data_directory],
+          File[$confd_directory],
+        ]
       }
 
     }
