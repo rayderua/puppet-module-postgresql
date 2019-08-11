@@ -56,14 +56,6 @@ class postgresql::configure {
         $pg_ident = {}
       }
 
-      # Create cluster
-      exec { "postgresql create cluster ${version}/${cluster}":
-        command => "pg_createcluster ${version} ${cluster}",
-        onlyif  => "pg_ctlcluster ${version} ${cluster} status 2>&1 | grep 'not exist'",
-        path    => ['/bin', '/usr/bin'],
-        require => Package["postgresql-${version}"],
-      } ->
-
       # Config directory
       file { ["/etc/postgresql/${version}/${cluster}"]:
         ensure  => directory,
@@ -99,7 +91,15 @@ class postgresql::configure {
         owner   => 'postgres', group => 'postgres', mode => '0644',
         content => template("postgresql/pg_ident.conf.erb"),
         notify  => Exec["postgresql reload ${version}/${cluster}"]
-      }
+      } ->
+
+      # Create cluster
+      exec { "postgresql create cluster ${version}/${cluster}":
+        command => "pg_createcluster ${version} ${cluster}",
+        onlyif  => "pg_ctlcluster ${version} ${cluster} status 2>&1 | grep 'not exist'",
+        path    => ['/bin', '/usr/bin'],
+        require => Package["postgresql-${version}"],
+      } ->
 
       exec { "postgresql reload ${version}/${cluster}":
         command     => "/usr/bin/pg_ctlcluster ${version} ${cluster} reload",
