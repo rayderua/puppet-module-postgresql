@@ -8,6 +8,7 @@ class postgresql::configure {
   $default_pg_hba     = $postgresql::params::pg_gba_postgresql_default
   $default_pg_ident   = $postgresql::params::pg_ident_postgresql_default
 
+
   if ( $clusters == false ) {
     notify{"No clusters configured yet": }
   } else {
@@ -43,6 +44,8 @@ class postgresql::configure {
       $pg_hba = hiera("postgresql::clusters::${cluster}::pg_hba", {})
       $pg_ident = hiera("postgresql::clusters::${cluster}::pg_ident", {})
 
+      notify{"hba path: postgresql::clusters::${cluster}::pg_hba": }
+      notify{"hba data: ${pg_hba}": }
       # Create cluster
       exec { "postgresql create cluster ${version}/${cluster}":
         command => "pg_createcluster ${version} ${cluster}",
