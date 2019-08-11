@@ -27,7 +27,7 @@ class postgresql::configure {
   if ( $clusters == false ) {
     notify{"No clusters configured yet": }
   } else {
-    keys($clusters).each | $cluster | {
+    $clusters.each | String $cluster, Hash $clusterconfig | {
       # add version/cluster variables to config
       $path_config = {
         'data_directory'    => "/var/lib/postgresql/${version}/${cluster}",
