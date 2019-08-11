@@ -84,6 +84,7 @@ class postgresql::configure {
         path => [ "/usr/local/sbin", "/usr/local/bin", "/usr/sbin", "/usr/bin", "/sbin", "/bin" ],
         command => "mkdir -p ${data_directory}",
         unless  => "test -d ${data_directory}",
+        notify  => [ Exec["postgresql create cluster ${version}/${cluster}"] ],
       }
 
       file { [$data_directory]:
