@@ -27,10 +27,10 @@ class postgresql::configure {
 
       # add version/cluster variables to config
       $path_config = {
-        'data_directory'    => "/var/lib/postgresql/${version}/${cluster}",
-        'hba_file'          => "/etc/postgresql/${version}/${cluster}/pg_hba.conf",
-        'ident_file'        => "/etc/postgresql/${version}/${cluster}/pg_ident.conf",
-        'external_pid_file' => "/run/postgresql/${version}-${cluster}.pid",
+        'data_directory'    => "'/var/lib/postgresql/${version}/${cluster}'",
+        'hba_file'          => "'/etc/postgresql/${version}/${cluster}/pg_hba.conf'",
+        'ident_file'        => "'/etc/postgresql/${version}/${cluster}/pg_ident.conf'",
+        'external_pid_file' => "'/run/postgresql/${version}-${cluster}.pid'",
       }
 
       $default_config = deep_merge($_defaul_config, $path_config);
