@@ -17,5 +17,8 @@
 <% if v.is_a?(Hash) -%>
 <%= v['type'] %>  <%= v['database'] %> <%= v['type'] %> <%= v['user'] %> <%= v['address'] %> <%= v['method'] %>
 <% end -%>
+<% if v.is_a?(String) -%>
+<%= v %>
+<% end -%>
 <% end -%>
 <% end -%>
