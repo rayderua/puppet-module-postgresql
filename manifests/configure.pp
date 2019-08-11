@@ -7,7 +7,7 @@ class postgresql::configure {
 
   $version  = $postgresql::version;
   $clusters = hiera('postgresql::clusters', false)
-
+  notify{"Postgresql Cluster: ${clusters}": }
   $default_pg_config  = $postgresql::params::config_postgresql_default;
   $default_pg_hba     = $postgresql::params::pg_gba_postgresql_default;
   $default_pg_ident   = $postgresql::params::pg_ident_postgresql_default;
