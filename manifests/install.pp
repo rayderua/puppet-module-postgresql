@@ -10,7 +10,7 @@ class postgresql::install {
     $packages = ["postgresql-${version}", "postgresql-client-${version}", "postgresql-contrib-${version}"]
   }
 
-  package{ [$packages]:
+  package{ $packages:
     ensure  => installed,
     require => Apt::Source['postgres']
   } ->
@@ -20,7 +20,7 @@ class postgresql::install {
     owner   => 'postgres',
     group   => 'postgres',
     mode    => '0755',
-    require => [$packages]
+    require => $packages
   }
 
 }
