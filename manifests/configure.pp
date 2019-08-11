@@ -62,8 +62,8 @@ class postgresql::configure {
         owner   => 'postgres',
         group   => 'postgres',
         mode    => '0755',
-        require => [ File["/etc/postgresql/${version}"], Exec["postgresql create cluster ${version}/${cluster}"]]
-      } ->
+        require => [ File["/etc/postgresql/${version}"] ]
+      }
 
       # Data directory
       file { ["/var/lib/postgresql/${version}/${cluster}"]:
@@ -71,39 +71,50 @@ class postgresql::configure {
         owner  => 'postgres',
         group  => 'postgres',
         mode   => '0700',
-      } ->
+        require => [ File["/etc/postgresql/${version}"] ]
+      }
 
       file { "/etc/postgresql/${version}/${cluster}/postgresql.conf":
         owner   => 'postgres',
         group   => 'postgres',
         mode    => '0644',
         content => template("postgresql/postgres.conf.erb"),
-        notify  => Exec["postgresql reload ${version}/${cluster}"]
-      } ->
+        notify  => Exec["postgresql reload ${version}/${cluster}"],
+        require => [ File['/etc/postgresql/${version}/${cluster}'] ]
+      }
 
       file { "/etc/postgresql/${version}/${cluster}/pg_hba.conf":
         owner   => 'postgres', group => 'postgres', mode => '0644',
         content => template("postgresql/pg_hba.conf.erb"),
-        notify  => Exec["postgresql reload ${version}/${cluster}"]
-      } ->
+        notify  => Exec["postgresql reload ${version}/${cluster}"],
+        require => [ File['/etc/postgresql/${version}/${cluster}'] ]
+      }
 
       file { "/etc/postgresql/${version}/${cluster}/pg_ident.conf":
         owner   => 'postgres', group => 'postgres', mode => '0644',
         content => template("postgresql/pg_ident.conf.erb"),
-        notify  => Exec["postgresql reload ${version}/${cluster}"]
-      } ->
+        notify  => Exec["postgresql reload ${version}/${cluster}"],
+        require => [ File['/etc/postgresql/${version}/${cluster}'] ]
+      }
 
       # Create cluster
       exec { "postgresql create cluster ${version}/${cluster}":
         command => "pg_createcluster ${version} ${cluster}",
         onlyif  => "pg_ctlcluster ${version} ${cluster} status 2>&1 | grep 'not exist'",
         path    => ['/bin', '/usr/bin'],
-        require => Package["postgresql-${version}"],
-      } ->
+        require => [
+          Package["postgresql-${version}"],
+          File["/etc/postgresql/${version}/${cluster}/pg_hba.conf"],
+          File["/etc/postgresql/${version}/${cluster}/postgresql.conf"],
+          File["/etc/postgresql/${version}/${cluster}/pg_ident.conf"],
+          File["/etc/postgresql/${version}/${cluster}/"],
+        ],
+        before => Exec["postgresql reload ${version}/${cluster}"]
+      }
 
       exec { "postgresql reload ${version}/${cluster}":
         command     => "/usr/bin/pg_ctlcluster ${version} ${cluster} reload",
-        refreshonly => true
+        refreshonly => true,
       }
 
     }
