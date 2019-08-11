@@ -12,14 +12,6 @@ class postgresql::install {
   package{ $packages:
     ensure  => installed,
     require => Apt::Source['postgres']
-  } ->
-
-  file { "/etc/postgresql/${version}":
-    ensure  => directory,
-    owner   => 'postgres',
-    group   => 'postgres',
-    mode    => '0755',
-    require => Package["postgresql-${version}"],
   }
 
 }

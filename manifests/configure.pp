@@ -9,6 +9,14 @@ class postgresql::configure {
   $default_pg_ident   = $postgresql::params::pg_ident_postgresql_default
 
 
+  file { "/etc/postgresql/${version}":
+    ensure  => directory,
+    owner   => 'postgres',
+    group   => 'postgres',
+    mode    => '0755',
+    require => Package["postgresql-${version}"],
+  }
+
   if ( $clusters == false ) {
     notify{"No clusters configured yet": }
   } else {
@@ -72,12 +80,17 @@ class postgresql::configure {
         $data_directory = "/var/lib/postgresql/${version}/${cluster}"
       }
 
+      exec { "create data directory":
+        command => "mkdir -p ${data_directory}",
+        unless  => "test -d ${data_directory}",
+      }
+
       file { [$data_directory]:
         ensure => directory,
         owner  => 'postgres',
         group  => 'postgres',
         mode   => '0700',
-        require => [ File["/etc/postgresql/${version}"] ],
+        require => [ Exec['create data directory'] ],
         notify  => Exec["postgresql reload ${version}/${cluster}"],
       }
 
