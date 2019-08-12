@@ -1,4 +1,5 @@
 class postgresql::configure {
+
   contain postgresql::params
 
   $version  = $postgresql::version;
@@ -52,6 +53,7 @@ class postgresql::configure {
       }
       $pg_config = deep_merge($default_config, $user_config)
 
+
       if has_key($clusterconfig, 'pg_hba') {
         $pg_hba = $clusterconfig['pg_hba']
       } else {
@@ -64,71 +66,6 @@ class postgresql::configure {
         $pg_ident = {}
       }
 
-      # Config directory
-      file { ["/etc/postgresql/${version}/${cluster}"]:
-        ensure  => directory,
-        owner   => 'postgres',
-        group   => 'postgres',
-        mode    => '0755',
-        require => [ File["/etc/postgresql/${version}"] ]
-      }
-
-      # Data directory
-      if has_key($pg_config, 'data_directory') {
-        $data_directory = $pg_config["data_directory"]
-      } else {
-        $data_directory = "/var/lib/postgresql/${version}/${cluster}"
-      }
-
-      $confd_directory = "/var/lib/postgresql/${version}/${cluster}/${pg_config["include_dir"]}"
-      file { [$confd_directory]:
-        ensure => directory,
-        owner  => 'postgres',
-        group  => 'postgres',
-        mode   => '0700',
-        notify  => Exec["postgresql reload ${version}/${cluster}"],
-      }
-
-
-      exec { "create data directory":
-        path => [ "/usr/local/sbin", "/usr/local/bin", "/usr/sbin", "/usr/bin", "/sbin", "/bin" ],
-        command => "mkdir -p ${data_directory}",
-        unless  => "test -d ${data_directory}",
-        notify  => [ Exec["postgresql create cluster ${version}/${cluster}"] ],
-      }
-
-      file { [$data_directory]:
-        ensure => directory,
-        owner  => 'postgres',
-        group  => 'postgres',
-        mode   => '0700',
-        require => [ Exec['create data directory'] ],
-        notify  => Exec["postgresql reload ${version}/${cluster}"],
-      }
-
-      file { "/etc/postgresql/${version}/${cluster}/postgresql.conf":
-        owner   => 'postgres',
-        group   => 'postgres',
-        mode    => '0644',
-        content => template("postgresql/postgres.conf.erb"),
-        notify  => Exec["postgresql reload ${version}/${cluster}"],
-        require => [ File["/etc/postgresql/${version}/${cluster}"] ]
-      }
-
-      file { "/etc/postgresql/${version}/${cluster}/pg_hba.conf":
-        owner   => 'postgres', group => 'postgres', mode => '0644',
-        content => template("postgresql/pg_hba.conf.erb"),
-        notify  => Exec["postgresql reload ${version}/${cluster}"],
-        require => [ File["/etc/postgresql/${version}/${cluster}"] ]
-      }
-
-      file { "/etc/postgresql/${version}/${cluster}/pg_ident.conf":
-        owner   => 'postgres', group => 'postgres', mode => '0644',
-        content => template("postgresql/pg_ident.conf.erb"),
-        notify  => Exec["postgresql reload ${version}/${cluster}"],
-        require => [ File["/etc/postgresql/${version}/${cluster}"] ]
-      }
-
       # Create cluster
       exec { "postgresql create cluster ${version}/${cluster}":
         command => "pg_createcluster ${version} ${cluster}",
@@ -139,12 +76,46 @@ class postgresql::configure {
           File["/etc/postgresql/${version}/${cluster}/pg_hba.conf"],
           File["/etc/postgresql/${version}/${cluster}/postgresql.conf"],
           File["/etc/postgresql/${version}/${cluster}/pg_ident.conf"],
-          File[$data_directory],
-          File[$confd_directory],
         ],
-        before => Exec["postgresql reload ${version}/${cluster}"]
-      }
+      } ->
 
+      # Configure cluster
+      file { ["/etc/postgresql/${version}/${cluster}"]:
+        ensure  => directory,
+        owner   => 'postgres',
+        group   => 'postgres',
+        mode    => '0755',
+        require => [ File["/etc/postgresql/${version}"] ]
+      } ->
+
+      file { "/etc/postgresql/${version}/${cluster}/postgresql.conf":
+        owner   => 'postgres',
+        group   => 'postgres',
+        mode    => '0644',
+        content => template("postgresql/postgres.conf.erb"),
+        notify  => Exec["postgresql reload ${version}/${cluster}"],
+        require => [ File["/etc/postgresql/${version}/${cluster}"] ]
+      } ->
+
+      file { "/etc/postgresql/${version}/${cluster}/pg_hba.conf":
+        owner   => 'postgres',
+        group   => 'postgres',
+        mode    => '0644',
+        content => template("postgresql/pg_hba.conf.erb"),
+        notify  => Exec["postgresql reload ${version}/${cluster}"],
+        require => [ File["/etc/postgresql/${version}/${cluster}"] ]
+      } ->
+
+      file { "/etc/postgresql/${version}/${cluster}/pg_ident.conf":
+        owner   => 'postgres',
+        group   => 'postgres',
+        mode    => '0644',
+        content => template("postgresql/pg_ident.conf.erb"),
+        notify  => Exec["postgresql reload ${version}/${cluster}"],
+        require => [ File["/etc/postgresql/${version}/${cluster}"] ]
+      } ->
+
+      # reload cluster
       exec { "postgresql reload ${version}/${cluster}":
         command     => "/usr/bin/pg_ctlcluster ${version} ${cluster} reload",
         refreshonly => true,
@@ -153,11 +124,8 @@ class postgresql::configure {
           File["/etc/postgresql/${version}/${cluster}/pg_hba.conf"],
           File["/etc/postgresql/${version}/${cluster}/postgresql.conf"],
           File["/etc/postgresql/${version}/${cluster}/pg_ident.conf"],
-          File[$data_directory],
-          File[$confd_directory],
         ]
       }
-
     }
   }
 }
