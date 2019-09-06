@@ -38,6 +38,7 @@ class postgresql::configure {
 
       # add version/cluster variables to config
       $path_config = {
+        'stats_temp_directory' => "/var/run/postgresql/${version}-main.pg_stat_tmp",
         'data_directory'    => "/var/lib/postgresql/${version}/${cluster}",
         'hba_file'          => "/etc/postgresql/${version}/${cluster}/pg_hba.conf",
         'ident_file'        => "/etc/postgresql/${version}/${cluster}/pg_ident.conf",

@@ -20,7 +20,6 @@ class postgresql::params {
     'dynamic_shared_memory_type' => 'posix',
     'log_line_prefix' => '%m [%p] %q%u@%d ',
     'log_timezone' => 'Etc/UTC',
-    'stats_temp_directory' => '/var/run/postgresql/9.4-main.pg_stat_tmp',
     'datestyle'=> 'iso, mdy',
     'timezone' => 'Etc/UTC',
     'lc_messages' => 'C.UTF-8',
