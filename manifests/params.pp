@@ -10,7 +10,7 @@ class postgresql::params {
     'ssl' => 'on',
     'ssl_cert_file' => '/etc/ssl/certs/ssl-cert-snakeoil.pem',
     'ssl_key_file' => '/etc/ssl/private/ssl-cert-snakeoil.key',
-    'shared_buffers' => '128M',
+    'shared_buffers' => '128MB',
     'huge_pages' => 'try',
     'temp_buffers' => '8MB',
     'work_mem' => '4MB',
