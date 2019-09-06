@@ -7,7 +7,7 @@
 <% if @default_pg_hba.is_a?(Array) -%>
 <% @default_pg_hba.each do | v | -%>
 <% if v.is_a?(Hash) -%>
-<%= v['type'] %>  <%= v['database'] %> <%= v['type'] %> <%= v['user'] %> <%= v['address'] %> <%= v['method'] %>
+<%= v['type'] %>  <%= v['database'] %>  <%= v['user'] %> <%= v['address'] %> <%= v['method'] %>
 <% end -%>
 <% end -%>
 <% end -%>
@@ -15,7 +15,7 @@
 <% if @pg_hba.is_a?(Array) -%>
 <% @pg_hba.each do | v | -%>
 <% if v.is_a?(Hash) -%>
-<%= v['type'] %>  <%= v['database'] %> <%= v['type'] %> <%= v['user'] %> <%= v['address'] %> <%= v['method'] %>
+<%= v['type'] %>  <%= v['database'] %> <%= v['user'] %> <%= v['address'] %> <%= v['method'] %>
 <% end -%>
 <% if v.is_a?(String) -%>
 <%= v %>
