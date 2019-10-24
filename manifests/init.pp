@@ -1,22 +1,36 @@
-class postgresql {
-  
-  $_version = hiera('postgresql::version', 11)
-  $version = $_version + 0
-
-  if ( ! $version in [9.3, 9.4, 9.5, 9.6, 10, 11] ) {
-    fail("Postgresql version: ${version} not supported")
-  }
-
-  class { 'postgresql::repo': }
-  -> class { 'postgresql::install': }
-  -> class { 'postgresql::configure': }
+class postgresql (
+  $clusters                   = $postgresql::params::clusters,
+  $user                       = $postgresql::params::user,
+  $group                      = $postgresql::params::group,
+  $purge_configs              = $postgresql::params::purge_configs,
+  $drop_clusters              = $postgresql::params::drop_clusters,
+  $manage_roles               = $postgresql::params::manage_roles,
+  $manage_database            = $postgresql::params::manage_database,
+  $psql_path                  = $postgresql::params::psql_path,
+  $default_database           = $postgresql::params::default_database,
+) inherits postgresql::params {
 
   contain 'postgresql::repo'
+
+  $clusters.each  | $_version, $_clusters | {
+    $version = $_version + 0
+    if ( !$version in $postgresql::params::allowed_versions ) {
+      notify { "Postgresql: version ${version} not supported": loglevel => warning }
+    }
+  }
+
   contain 'postgresql::install'
-  contain 'postgresql::configure'
+  contain 'postgresql::config'
+  contain 'postgresql::clusters'
+  contain 'postgresql::roles'
+  contain 'postgresql::databases'
 
   Class['postgresql::repo']
   -> Class['postgresql::install']
-  -> Class['postgresql::configure']
+  -> Class['postgresql::config']
+  -> Class['postgresql::clusters']
+  -> Class['postgresql::roles']
+  -> Class['postgresql::databases']
 
 }
+

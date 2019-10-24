@@ -4,10 +4,10 @@
 # ---------------------------------------------------
 # MAPNAME       SYSTEM-USERNAME         PG-USERNAME
 # ---------------------------------------------------
-<% if @default_pg_ident.is_a?(Array) -%>
-<% @default_pg_ident.map do | v | -%>
+<% if @default_ident.is_a?(Array) -%>
+<% @default_ident.map do | v | -%>
 <% if v.is_a?(Hash) -%>
-<%= v['mapname'] %>  <%= v['system'] %> <%= v['username'] %>
+<% if !v['mapname'].nil? -%><%= "%-32s" % v['mapname'] %><% end -%> <% if !v['system'].nil? -%><%= "%-32s" % v['system'] %><% end -%> <% if !v['username'].nil? -%><%= "%-32s" % v['username'] %><% end -%>
 <% end -%>
 <% end -%>
 <% end -%>
@@ -15,7 +15,7 @@
 <% if @pg_ident.is_a?(Array) -%>
 <% @pg_ident.map do | v | -%>
 <% if v.is_a?(Hash) -%>
-<%= v['mapname'] %>  <%= v['system'] %> <%= v['username'] %>
+<% if !v['mapname'].nil? -%><%= "%-32s" % v['mapname'] %><% end -%> <% if !v['system'].nil? -%><%= "%-32s" % v['system'] %><% end -%> <% if !v['username'].nil? -%><%= "%-32s" % v['username'] %><% end -%>
 <% end -%>
 <% end -%>
 <% end -%>

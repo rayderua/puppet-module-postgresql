@@ -1,18 +1,20 @@
-class postgresql::install {
+class postgresql::install inherits postgresql {
 
-  $_version  = $postgresql::version;
-  $version = $_version + 0
+  $clusters.each  | $_version, $_clusters | {
+    $version = $_version + 0
+    if ( $version in $postgresql::params::allowed_versions ) {
 
-  package{ ["postgresql-${version}", "postgresql-client-${version}"]:
-    ensure  => installed,
-    require => Apt::Source['postgres']
-  }
+      package{["postgresql-${version}", "postgresql-client-${version}"]:
+        ensure  => 'installed',
+        require => Apt::Source['postgresql']
+      }
 
-  if ( $version < 10 ) {
-    package { "postgresql-contrib-${version}":
-      ensure  => installed,
-      require => Apt::Source['postgres']
+      if ( $_version < 10 ) {
+        package{["postgresql-contrib-${version}"]:
+          ensure  => 'installed',
+          require => Apt::Source['postgresql']
+        }
+      }
     }
   }
-
 }

@@ -1,6 +1,9 @@
-class postgresql::repo {
+class postgresql::repo inherits postgresql {
 
-  apt::source { 'postgres':
+  Class['postgresql::repo']
+  -> Class['apt::update']
+
+  apt::source { 'postgresql':
     location => 'http://apt.postgresql.org/pub/repos/apt/',
     release  => "${lsbdistcodename}-pgdg",
     repos    => 'main',
@@ -10,5 +13,4 @@ class postgresql::repo {
       source => 'https://www.postgresql.org/media/keys/ACCC4CF8.asc'
     }
   }
-
 }
