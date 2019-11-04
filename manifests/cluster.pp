@@ -68,11 +68,14 @@ define postgresql::cluster (
 
     ## pg_hba.conf
     $default_hba = $postgresql::params::default_hba
+
     if ( has_key($config, 'pg_hba') ) {
-      $pg_hba = $config['pg_hba']
+      $h_pg_hba = $config['pg_hba']
     } else {
-      $pg_hba = {}
+      $h_pg_hba = {}
     }
+
+    $pg_hba = deep_merge($default_hba, $h_pg_hba)
 
     ## pg_ident.conf
     $default_ident = $postgresql::params::default_ident
