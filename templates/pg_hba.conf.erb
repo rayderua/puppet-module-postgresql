@@ -1,16 +1,15 @@
 #
-# HEADER: Managet by puppet
+# THIS FILE MANAGED BY PUPPET! DO NOT EDIT
 #
 # ---------------------------------------------------------------------------------------------------------------------#
-# TYPE      DATABASE                USER                    ADDRESS                       METHOD      OPTIONS          #
+# TYPE       DATABASE                 USER                     ADDRESS                        METHOD       OPTIONS     #
 # ---------------------------------------------------------------------------------------------------------------------#
-<% if @pg_hba.is_a?(Array) -%>
-<% @pg_hba.each do | v | -%>
+
+<% @postgresql_hba.sort.each do | k,  v | -%>
 <% if v.is_a?(Hash) -%>
-<% if !v['type'].nil? -%><%= "%-12s" % v['type'] %><% end -%> <% if !v['database'].nil? -%><%= "%-24s" % v['database'] %><% end -%> <% if !v['user'].nil? -%><%= "%-24s" % v['user'] %><% end -%> <% if !v['address'].nil? -%><%= "%-30s" % v['address'] %><% end -%> <% if !v['auth_method'].nil? -%><%= "%-12s" % v['auth_method'] %><% end -%> <% if !v['auth_options'].nil? -%><%= v['auth_options'] %><% end %>
+<% if !v['type'].nil? -%><%= "%-12s" % v['type'] %><% end -%> <% if !v['database'].nil? -%><%= "%-24s" % v['database'] %><% end -%> <% if !v['user'].nil? -%><%= "%-24s" % v['user'] %><% end -%> <% if !v['address'].nil? -%><%= "%-30s" % v['address'] %><% end -%> <% if !v['auth_method'].nil? -%><%= "%-12s" % v['auth_method'] %><% end -%> <% if !v['auth_options'].nil? -%><%= v['auth_options'] %><% end %>    # <%= k %>
 <% end -%>
 <% if v.is_a?(String) -%>
-<%= v %>
-<% end -%>
+<%= v %>    # <%= k %>
 <% end -%>
 <% end -%>

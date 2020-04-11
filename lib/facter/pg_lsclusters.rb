@@ -18,8 +18,9 @@ Facter.add('pg_lsclusters') do
                         if ! clusters["#{version}"].has_key?("#{cluster}")
                             clusters["#{version}"]["#{cluster}"] = {}
                         end
+                        status_array = status.split(',')
                         clusters["#{version}"]["#{cluster}"]["port"]    = port
-                        clusters["#{version}"]["#{cluster}"]["status"]  = status
+                        clusters["#{version}"]["#{cluster}"]["status"]  = status_array
                     end
                 end
             end

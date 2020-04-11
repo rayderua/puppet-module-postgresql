@@ -1,36 +1,32 @@
 class postgresql (
-  $clusters                   = $postgresql::params::clusters,
-  $user                       = $postgresql::params::user,
-  $group                      = $postgresql::params::group,
-  $purge_configs              = $postgresql::params::purge_configs,
-  $drop_clusters              = $postgresql::params::drop_clusters,
-  $manage_roles               = $postgresql::params::manage_roles,
-  $manage_database            = $postgresql::params::manage_database,
-  $psql_path                  = $postgresql::params::psql_path,
-  $default_database           = $postgresql::params::default_database,
+
+  String  $user                     = $postgresql::params::user,
+  String  $group                    = $postgresql::params::group,
+  Boolean $stop_clusters            = $postgresql::params::stop_clusters,
+  String  $psql                     = $postgresql::params::psql,
+  Boolean $manage                   = $postgresql::params::manage,
+  # String  $default_database         = $postgresql::params::default_database,
+  # Hash    $default_connect_settings = $postgresql::params::default_connect_settings,
+  # String  $locale                   = $postgresql::params::locale,
+  # String  $encoding                 = $postgresql::params::encoding
+
 ) inherits postgresql::params {
 
-  contain 'postgresql::repo'
-
-  $clusters.each  | $_version, $_clusters | {
-    $version = $_version + 0
-    if ( !$version in $postgresql::params::allowed_versions ) {
-      notify { "Postgresql: version ${version} not supported": loglevel => warning }
-    }
+  if ( $pg_lsclusters == false ) {
+    fail("postgresql::clusters: Could not get current cluster list from pg_lsclusters")
   }
 
+  $clusters                 = postgresql_parse_clusters( lookup('postgresql::clusters',  Hash, 'deep', {}) )
+
+  contain 'postgresql::repo'
   contain 'postgresql::install'
-  contain 'postgresql::config'
+  contain 'postgresql::disable'
   contain 'postgresql::clusters'
-  contain 'postgresql::roles'
-  contain 'postgresql::databases'
 
   Class['postgresql::repo']
   -> Class['postgresql::install']
-  -> Class['postgresql::config']
+  -> Class['postgresql::disable']
   -> Class['postgresql::clusters']
-  -> Class['postgresql::roles']
-  -> Class['postgresql::databases']
 
 }
 

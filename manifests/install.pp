@@ -1,20 +1,33 @@
 class postgresql::install inherits postgresql {
 
-  $clusters.each  | $_version, $_clusters | {
-    $version = $_version + 0
+  $clusters.each  | $version, $_clusters | {
     if ( $version in $postgresql::params::allowed_versions ) {
-
-      package{["postgresql-${version}", "postgresql-client-${version}"]:
+      # Install postgresql
+      package { ["postgresql-${version}", "postgresql-client-${version}"]:
         ensure  => 'installed',
-        require => Apt::Source['postgresql']
+        require => [ Apt::Source['postgresql'], Class['Apt::Update'] ]
       }
 
-      if ( $_version < 10 ) {
-        package{["postgresql-contrib-${version}"]:
-          ensure  => 'installed',
-          require => Apt::Source['postgresql']
+      case "$version" {
+        '9.3', '9.4', '9.5', '9.6': {
+          package { ["postgresql-contrib-${version}"]:
+            ensure  => 'installed',
+            require => [ Apt::Source['postgresql'], Class['Apt::Update'] ]
+          }
+        }
+        default: {
+          package { ["postgresql-contrib"]:
+            ensure  => 'installed',
+            require => [ Apt::Source['postgresql'], Class['Apt::Update'] ]
+          }
         }
       }
     }
+  }
+
+  exec { 'postgresql_daemon_reload':
+    path        => ['/usr/local/sbin','/usr/local/bin','/usr/sbin','/usr/bin','/sbin','/bin'],
+    command     => '/bin/systemctl daemon-reload',
+    refreshonly => true
   }
 }
