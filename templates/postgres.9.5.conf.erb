@@ -1,0 +1,632 @@
+#
+# THIS FILE MANAGED BY PUPPET! DO NOT EDIT
+#
+
+# -----------------------------
+# PostgreSQL configuration file
+# -----------------------------
+#
+# This file consists of lines of the form:
+#
+#   name = value
+#
+# (The "=" is optional.)  Whitespace may be used.  Comments are introduced with
+# "#" anywhere on a line.  The complete list of parameter names and allowed
+# values can be found in the PostgreSQL documentation.
+#
+# The commented-out settings shown in this file represent the default values.
+# Re-commenting a setting is NOT sufficient to revert it to the default value;
+# you need to reload the server.
+#
+# This file is read on server startup and when the server receives a SIGHUP
+# signal.  If you edit the file on a running system, you have to SIGHUP the
+# server for the changes to take effect, or use "pg_ctl reload".  Some
+# parameters, which are marked below, require a server shutdown and restart to
+# take effect.
+#
+# Any parameter can also be given as a command-line option to the server, e.g.,
+# "postgres -c log_connections=on".  Some parameters can be changed at run time
+# with the "SET" SQL command.
+#
+# Memory units:  kB = kilobytes        Time units:  ms  = milliseconds
+#                MB = megabytes                     s   = seconds
+#                GB = gigabytes                     min = minutes
+#                TB = terabytes                     h   = hours
+#                                                   d   = days
+
+
+#------------------------------------------------------------------------------
+# FILE LOCATIONS
+#------------------------------------------------------------------------------
+
+# The default values of these variables are driven from the -D command-line
+# option or PGDATA environment variable, represented here as ConfigDir.
+
+<% if @postgresql_conf.has_key?('data_directory') %>data_directory = '<%= @postgresql_conf['data_directory'] %>'<% else %>#data_directory = 'ConfigDir'<% end %>		# use data in another directory
+					# (change requires restart)
+<% if @postgresql_conf.has_key?('hba_file') %>hba_file = '<%= @postgresql_conf['hba_file'] %>'<% else %>#hba_file = 'ConfigDir/pg_hba.conf'<% end %>	# host-based authentication file
+					# (change requires restart)
+<% if @postgresql_conf.has_key?('ident_file') %>ident_file = '<%= @postgresql_conf['ident_file'] %>'<% else %>#ident_file = 'ConfigDir/pg_ident.conf'<% end %>	# ident configuration file
+					# (change requires restart)
+
+# If external_pid_file is not explicitly set, no extra PID file is written.
+<% if @postgresql_conf.has_key?('external_pid_file') %>external_pid_file = '<%= @postgresql_conf['external_pid_file'] %>'<% else %>#external_pid_file = ''<% end %>			# write an extra PID file
+					# (change requires restart)
+
+
+#------------------------------------------------------------------------------
+# CONNECTIONS AND AUTHENTICATION
+#------------------------------------------------------------------------------
+
+# - Connection Settings -
+
+<% if @postgresql_conf.has_key?('listen_addresses') %>listen_addresses = '<%= @postgresql_conf['listen_addresses'] %>'<% else %>#listen_addresses = 'localhost'<% end %>		# what IP address(es) to listen on;
+					# comma-separated list of addresses;
+					# defaults to 'localhost'; use '*' for all
+					# (change requires restart)
+<% if @postgresql_conf.has_key?('port') %>port = <%= @postgresql_conf['port'] %><% else %>#port = 5432<% end %>				# (change requires restart)
+<% if @postgresql_conf.has_key?('max_connections') %>max_connections = <%= @postgresql_conf['max_connections'] %><% else %>#max_connections = 100<% end %>			# (change requires restart)
+<% if @postgresql_conf.has_key?('superuser_reserved_connections') %>superuser_reserved_connections = <%= @postgresql_conf['superuser_reserved_connections'] %><% else %>#superuser_reserved_connections = 3<% end %>	# (change requires restart)
+<% if @postgresql_conf.has_key?('unix_socket_directories') %>unix_socket_directories = '<%= @postgresql_conf['unix_socket_directories'] %>'<% else %>#unix_socket_directories = '/tmp'<% end %>	# comma-separated list of directories
+					# (change requires restart)
+<% if @postgresql_conf.has_key?('unix_socket_group') %>unix_socket_group = '<%= @postgresql_conf['unix_socket_group'] %>'<% else %>#unix_socket_group = ''<% end %>			# (change requires restart)
+<% if @postgresql_conf.has_key?('unix_socket_permissions') %>unix_socket_permissions = <%= @postgresql_conf['unix_socket_permissions'] %><% else %>#unix_socket_permissions = 0777<% end %>		# begin with 0 to use octal notation
+					# (change requires restart)
+<% if @postgresql_conf.has_key?('bonjour') %>bonjour = <%= @postgresql_conf['bonjour'] %><% else %>#bonjour = off<% end %>				# advertise server via Bonjour
+					# (change requires restart)
+<% if @postgresql_conf.has_key?('bonjour_name') %>bonjour_name = '<%= @postgresql_conf['bonjour_name'] %>'<% else %>#bonjour_name = ''<% end %>			# defaults to the computer name
+					# (change requires restart)
+
+# - Security and Authentication -
+
+<% if @postgresql_conf.has_key?('authentication_timeout') %>authentication_timeout = <%= @postgresql_conf['authentication_timeout'] %><% else %>#authentication_timeout = 1min<% end %>		# 1s-600s
+<% if @postgresql_conf.has_key?('ssl') %>ssl = <%= @postgresql_conf['ssl'] %><% else %>#ssl = off<% end %>				# (change requires restart)
+<% if @postgresql_conf.has_key?('ssl_ciphers') %>ssl_ciphers = '<%= @postgresql_conf['ssl_ciphers'] %>'<% else %>#ssl_ciphers = 'HIGH:MEDIUM:+3DES:!aNULL'<% end %> # allowed SSL ciphers
+					# (change requires restart)
+<% if @postgresql_conf.has_key?('ssl_prefer_server_ciphers') %>ssl_prefer_server_ciphers = <%= @postgresql_conf['ssl_prefer_server_ciphers'] %><% else %>#ssl_prefer_server_ciphers = on<% end %>		# (change requires restart)
+<% if @postgresql_conf.has_key?('ssl_ecdh_curve') %>ssl_ecdh_curve = '<%= @postgresql_conf['ssl_ecdh_curve'] %>'<% else %>#ssl_ecdh_curve = 'prime256v1'<% end %>		# (change requires restart)
+<% if @postgresql_conf.has_key?('ssl_cert_file') %>ssl_cert_file = '<%= @postgresql_conf['ssl_cert_file'] %>'<% else %>#ssl_cert_file = 'server.crt'<% end %>		# (change requires restart)
+<% if @postgresql_conf.has_key?('ssl_key_file') %>ssl_key_file = '<%= @postgresql_conf['ssl_key_file'] %>'<% else %>#ssl_key_file = 'server.key'<% end %>		# (change requires restart)
+<% if @postgresql_conf.has_key?('ssl_ca_file') %>ssl_ca_file = '<%= @postgresql_conf['ssl_ca_file'] %>'<% else %>#ssl_ca_file = ''<% end %>			# (change requires restart)
+<% if @postgresql_conf.has_key?('ssl_crl_file') %>ssl_crl_file = '<%= @postgresql_conf['ssl_crl_file'] %>'<% else %>#ssl_crl_file = ''<% end %>			# (change requires restart)
+<% if @postgresql_conf.has_key?('password_encryption') %>password_encryption = <%= @postgresql_conf['password_encryption'] %><% else %>#password_encryption = on<% end %>
+<% if @postgresql_conf.has_key?('db_user_namespace') %>db_user_namespace = <%= @postgresql_conf['db_user_namespace'] %><% else %>#db_user_namespace = off<% end %>
+<% if @postgresql_conf.has_key?('row_security') %>row_security = <%= @postgresql_conf['row_security'] %><% else %>#row_security = on<% end %>
+
+# GSSAPI using Kerberos
+<% if @postgresql_conf.has_key?('krb_server_keyfile') %>krb_server_keyfile = '<%= @postgresql_conf['krb_server_keyfile'] %>'<% else %>#krb_server_keyfile = ''<% end %>
+<% if @postgresql_conf.has_key?('krb_caseins_users') %>krb_caseins_users = <%= @postgresql_conf['krb_caseins_users'] %><% else %>#krb_caseins_users = off<% end %>
+
+# - TCP Keepalives -
+# see "man 7 tcp" for details
+
+<% if @postgresql_conf.has_key?('tcp_keepalives_idle') %>tcp_keepalives_idle = <%= @postgresql_conf['tcp_keepalives_idle'] %><% else %>#tcp_keepalives_idle = 0<% end %>		# TCP_KEEPIDLE, in seconds;
+					# 0 selects the system default
+<% if @postgresql_conf.has_key?('tcp_keepalives_interval') %>tcp_keepalives_interval = <%= @postgresql_conf['tcp_keepalives_interval'] %><% else %>#tcp_keepalives_interval = 0<% end %>		# TCP_KEEPINTVL, in seconds;
+					# 0 selects the system default
+<% if @postgresql_conf.has_key?('tcp_keepalives_count') %>tcp_keepalives_count = <%= @postgresql_conf['tcp_keepalives_count'] %><% else %>#tcp_keepalives_count = 0<% end %>		# TCP_KEEPCNT;
+					# 0 selects the system default
+
+
+#------------------------------------------------------------------------------
+# RESOURCE USAGE (except WAL)
+#------------------------------------------------------------------------------
+
+# - Memory -
+
+<% if @postgresql_conf.has_key?('shared_buffers') %>shared_buffers = <%= @postgresql_conf['shared_buffers'] %><% else %>#shared_buffers = 32MB<% end %>			# min 128kB
+					# (change requires restart)
+<% if @postgresql_conf.has_key?('huge_pages') %>huge_pages = <%= @postgresql_conf['huge_pages'] %><% else %>#huge_pages = try<% end %>			# on, off, or try
+					# (change requires restart)
+<% if @postgresql_conf.has_key?('temp_buffers') %>temp_buffers = <%= @postgresql_conf['temp_buffers'] %><% else %>#temp_buffers = 8MB<% end %>			# min 800kB
+<% if @postgresql_conf.has_key?('max_prepared_transactions') %>max_prepared_transactions = <%= @postgresql_conf['max_prepared_transactions'] %><% else %>#max_prepared_transactions = 0<% end %>		# zero disables the feature
+					# (change requires restart)
+# Caution: it is not advisable to set max_prepared_transactions nonzero unless
+# you actively intend to use prepared transactions.
+<% if @postgresql_conf.has_key?('work_mem') %>work_mem = <%= @postgresql_conf['work_mem'] %><% else %>#work_mem = 4MB<% end %>				# min 64kB
+<% if @postgresql_conf.has_key?('maintenance_work_mem') %>maintenance_work_mem = <%= @postgresql_conf['maintenance_work_mem'] %><% else %>#maintenance_work_mem = 64MB<% end %>		# min 1MB
+<% if @postgresql_conf.has_key?('autovacuum_work_mem') %>autovacuum_work_mem = <%= @postgresql_conf['autovacuum_work_mem'] %><% else %>#autovacuum_work_mem = -1<% end %>		# min 1MB, or -1 to use maintenance_work_mem
+<% if @postgresql_conf.has_key?('max_stack_depth') %>max_stack_depth = <%= @postgresql_conf['max_stack_depth'] %><% else %>#max_stack_depth = 2MB<% end %>			# min 100kB
+<% if @postgresql_conf.has_key?('dynamic_shared_memory_type') %>dynamic_shared_memory_type = <%= @postgresql_conf['dynamic_shared_memory_type'] %><% else %>#dynamic_shared_memory_type = posix<% end %>	# the default is the first option
+					# supported by the operating system:
+					#   posix
+					#   sysv
+					#   windows
+					#   mmap
+					# use none to disable dynamic shared memory
+					# (change requires restart)
+
+# - Disk -
+
+<% if @postgresql_conf.has_key?('temp_file_limit') %>temp_file_limit = <%= @postgresql_conf['temp_file_limit'] %><% else %>#temp_file_limit = -1<% end %>			# limits per-session temp file space
+					# in kB, or -1 for no limit
+
+# - Kernel Resource Usage -
+
+<% if @postgresql_conf.has_key?('max_files_per_process') %>max_files_per_process = <%= @postgresql_conf['max_files_per_process'] %><% else %>#max_files_per_process = 1000<% end %>		# min 25
+					# (change requires restart)
+<% if @postgresql_conf.has_key?('shared_preload_libraries') %>shared_preload_libraries = '<%= @postgresql_conf['shared_preload_libraries'] %>'<% else %>#shared_preload_libraries = ''<% end %>		# (change requires restart)
+
+# - Cost-Based Vacuum Delay -
+
+<% if @postgresql_conf.has_key?('vacuum_cost_delay') %>vacuum_cost_delay = <%= @postgresql_conf['vacuum_cost_delay'] %><% else %>#vacuum_cost_delay = 0<% end %>			# 0-100 milliseconds
+<% if @postgresql_conf.has_key?('vacuum_cost_page_hit') %>vacuum_cost_page_hit = <%= @postgresql_conf['vacuum_cost_page_hit'] %><% else %>#vacuum_cost_page_hit = 1<% end %>		# 0-10000 credits
+<% if @postgresql_conf.has_key?('vacuum_cost_page_miss') %>vacuum_cost_page_miss = <%= @postgresql_conf['vacuum_cost_page_miss'] %><% else %>#vacuum_cost_page_miss = 10<% end %>		# 0-10000 credits
+<% if @postgresql_conf.has_key?('vacuum_cost_page_dirty') %>vacuum_cost_page_dirty = <%= @postgresql_conf['vacuum_cost_page_dirty'] %><% else %>#vacuum_cost_page_dirty = 20<% end %>		# 0-10000 credits
+<% if @postgresql_conf.has_key?('vacuum_cost_limit') %>vacuum_cost_limit = <%= @postgresql_conf['vacuum_cost_limit'] %><% else %>#vacuum_cost_limit = 200<% end %>		# 1-10000 credits
+
+# - Background Writer -
+
+<% if @postgresql_conf.has_key?('bgwriter_delay') %>bgwriter_delay = <%= @postgresql_conf['bgwriter_delay'] %><% else %>#bgwriter_delay = 200ms<% end %>			# 10-10000ms between rounds
+<% if @postgresql_conf.has_key?('bgwriter_lru_maxpages') %>bgwriter_lru_maxpages = <%= @postgresql_conf['bgwriter_lru_maxpages'] %><% else %>#bgwriter_lru_maxpages = 100<% end %>		# 0-1000 max buffers written/round
+<% if @postgresql_conf.has_key?('bgwriter_lru_multiplier') %>bgwriter_lru_multiplier = <%= @postgresql_conf['bgwriter_lru_multiplier'] %><% else %>#bgwriter_lru_multiplier = 2.0<% end %>		# 0-10.0 multipler on buffers scanned/round
+
+# - Asynchronous Behavior -
+
+<% if @postgresql_conf.has_key?('effective_io_concurrency') %>effective_io_concurrency = <%= @postgresql_conf['effective_io_concurrency'] %><% else %>#effective_io_concurrency = 1<% end %>		# 1-1000; 0 disables prefetching
+<% if @postgresql_conf.has_key?('max_worker_processes') %>max_worker_processes = <%= @postgresql_conf['max_worker_processes'] %><% else %>#max_worker_processes = 8<% end %>
+
+
+#------------------------------------------------------------------------------
+# WRITE AHEAD LOG
+#------------------------------------------------------------------------------
+
+# - Settings -
+
+<% if @postgresql_conf.has_key?('wal_level') %>wal_level = <%= @postgresql_conf['wal_level'] %><% else %>#wal_level = minimal<% end %>			# minimal, archive, hot_standby, or logical
+					# (change requires restart)
+<% if @postgresql_conf.has_key?('fsync') %>fsync = <%= @postgresql_conf['fsync'] %><% else %>#fsync = on<% end %>				# turns forced synchronization on or off
+<% if @postgresql_conf.has_key?('synchronous_commit') %>synchronous_commit = <%= @postgresql_conf['synchronous_commit'] %><% else %>#synchronous_commit = on<% end %>		# synchronization level;
+					# off, local, remote_write, or on
+<% if @postgresql_conf.has_key?('wal_sync_method') %>wal_sync_method = <%= @postgresql_conf['wal_sync_method'] %><% else %>#wal_sync_method = fsync<% end %>		# the default is the first option
+					# supported by the operating system:
+					#   open_datasync
+					#   fdatasync (default on Linux)
+					#   fsync
+					#   fsync_writethrough
+					#   open_sync
+<% if @postgresql_conf.has_key?('full_page_writes') %>full_page_writes = <%= @postgresql_conf['full_page_writes'] %><% else %>#full_page_writes = on<% end %>			# recover from partial page writes
+<% if @postgresql_conf.has_key?('wal_compression') %>wal_compression = <%= @postgresql_conf['wal_compression'] %><% else %>#wal_compression = off<% end %>			# enable compression of full-page writes
+<% if @postgresql_conf.has_key?('wal_log_hints') %>wal_log_hints = <%= @postgresql_conf['wal_log_hints'] %><% else %>#wal_log_hints = off<% end %>			# also do full page writes of non-critical updates
+					# (change requires restart)
+<% if @postgresql_conf.has_key?('wal_buffers') %>wal_buffers = <%= @postgresql_conf['wal_buffers'] %><% else %>#wal_buffers = -1<% end %>			# min 32kB, -1 sets based on shared_buffers
+					# (change requires restart)
+<% if @postgresql_conf.has_key?('wal_writer_delay') %>wal_writer_delay = <%= @postgresql_conf['wal_writer_delay'] %><% else %>#wal_writer_delay = 200ms<% end %>		# 1-10000 milliseconds
+
+<% if @postgresql_conf.has_key?('commit_delay') %>commit_delay = <%= @postgresql_conf['commit_delay'] %><% else %>#commit_delay = 0<% end %>			# range 0-100000, in microseconds
+<% if @postgresql_conf.has_key?('commit_siblings') %>commit_siblings = <%= @postgresql_conf['commit_siblings'] %><% else %>#commit_siblings = 5<% end %>			# range 1-1000
+
+# - Checkpoints -
+
+<% if @postgresql_conf.has_key?('checkpoint_timeout') %>checkpoint_timeout = <%= @postgresql_conf['checkpoint_timeout'] %><% else %>#checkpoint_timeout = 5min<% end %>		# range 30s-1h
+<% if @postgresql_conf.has_key?('max_wal_size') %>max_wal_size = <%= @postgresql_conf['max_wal_size'] %><% else %>#max_wal_size = 1GB<% end %>
+<% if @postgresql_conf.has_key?('min_wal_size') %>min_wal_size = <%= @postgresql_conf['min_wal_size'] %><% else %>#min_wal_size = 80MB<% end %>
+<% if @postgresql_conf.has_key?('checkpoint_completion_target') %>checkpoint_completion_target = <%= @postgresql_conf['checkpoint_completion_target'] %><% else %>#checkpoint_completion_target = 0.5<% end %>	# checkpoint target duration, 0.0 - 1.0
+<% if @postgresql_conf.has_key?('checkpoint_warning') %>checkpoint_warning = <%= @postgresql_conf['checkpoint_warning'] %><% else %>#checkpoint_warning = 30s<% end %>		# 0 disables
+
+# - Archiving -
+
+<% if @postgresql_conf.has_key?('archive_mode') %>archive_mode = <%= @postgresql_conf['archive_mode'] %><% else %>#archive_mode = off<% end %>		# enables archiving; off, on, or always
+				# (change requires restart)
+<% if @postgresql_conf.has_key?('archive_command') %>archive_command = '<%= @postgresql_conf['archive_command'] %>'<% else %>#archive_command = ''<% end %>		# command to use to archive a logfile segment
+				# placeholders: %p = path of file to archive
+				#               %f = file name only
+				# e.g. 'test ! -f /mnt/server/archivedir/%f && cp %p /mnt/server/archivedir/%f'
+<% if @postgresql_conf.has_key?('archive_timeout') %>archive_timeout = <%= @postgresql_conf['archive_timeout'] %><% else %>#archive_timeout = 0<% end %>		# force a logfile segment switch after this
+				# number of seconds; 0 disables
+
+
+#------------------------------------------------------------------------------
+# REPLICATION
+#------------------------------------------------------------------------------
+
+# - Sending Server(s) -
+
+# Set these on the master and on any standby that will send replication data.
+
+<% if @postgresql_conf.has_key?('max_wal_senders') %>max_wal_senders = <%= @postgresql_conf['max_wal_senders'] %><% else %>#max_wal_senders = 0<% end %>		# max number of walsender processes
+				# (change requires restart)
+<% if @postgresql_conf.has_key?('wal_keep_segments') %>wal_keep_segments = <%= @postgresql_conf['wal_keep_segments'] %><% else %>#wal_keep_segments = 0<% end %>		# in logfile segments, 16MB each; 0 disables
+<% if @postgresql_conf.has_key?('wal_sender_timeout') %>wal_sender_timeout = <%= @postgresql_conf['wal_sender_timeout'] %><% else %>#wal_sender_timeout = 60s<% end %>	# in milliseconds; 0 disables
+
+<% if @postgresql_conf.has_key?('max_replication_slots') %>max_replication_slots = <%= @postgresql_conf['max_replication_slots'] %><% else %>#max_replication_slots = 0<% end %>	# max number of replication slots
+				# (change requires restart)
+<% if @postgresql_conf.has_key?('track_commit_timestamp') %>track_commit_timestamp = <%= @postgresql_conf['track_commit_timestamp'] %><% else %>#track_commit_timestamp = off<% end %>	# collect timestamp of transaction commit
+				# (change requires restart)
+
+# - Master Server -
+
+# These settings are ignored on a standby server.
+
+<% if @postgresql_conf.has_key?('synchronous_standby_names') %>synchronous_standby_names = '<%= @postgresql_conf['synchronous_standby_names'] %>'<% else %>#synchronous_standby_names = ''<% end %>	# standby servers that provide sync rep
+				# comma-separated list of application_name
+				# from standby(s); '*' = all
+<% if @postgresql_conf.has_key?('vacuum_defer_cleanup_age') %>vacuum_defer_cleanup_age = <%= @postgresql_conf['vacuum_defer_cleanup_age'] %><% else %>#vacuum_defer_cleanup_age = 0<% end %>	# number of xacts by which cleanup is delayed
+
+# - Standby Servers -
+
+# These settings are ignored on a master server.
+
+<% if @postgresql_conf.has_key?('hot_standby') %>hot_standby = <%= @postgresql_conf['hot_standby'] %><% else %>#hot_standby = off<% end %>			# "on" allows queries during recovery
+					# (change requires restart)
+<% if @postgresql_conf.has_key?('max_standby_archive_delay') %>max_standby_archive_delay = <%= @postgresql_conf['max_standby_archive_delay'] %><% else %>#max_standby_archive_delay = 30s<% end %>	# max delay before canceling queries
+					# when reading WAL from archive;
+					# -1 allows indefinite delay
+<% if @postgresql_conf.has_key?('max_standby_streaming_delay') %>max_standby_streaming_delay = <%= @postgresql_conf['max_standby_streaming_delay'] %><% else %>#max_standby_streaming_delay = 30s<% end %>	# max delay before canceling queries
+					# when reading streaming WAL;
+					# -1 allows indefinite delay
+<% if @postgresql_conf.has_key?('wal_receiver_status_interval') %>wal_receiver_status_interval = <%= @postgresql_conf['wal_receiver_status_interval'] %><% else %>#wal_receiver_status_interval = 10s<% end %>	# send replies at least this often
+					# 0 disables
+<% if @postgresql_conf.has_key?('hot_standby_feedback') %>hot_standby_feedback = <%= @postgresql_conf['hot_standby_feedback'] %><% else %>#hot_standby_feedback = off<% end %>		# send info from standby to prevent
+					# query conflicts
+<% if @postgresql_conf.has_key?('wal_receiver_timeout') %>wal_receiver_timeout = <%= @postgresql_conf['wal_receiver_timeout'] %><% else %>#wal_receiver_timeout = 60s<% end %>		# time that receiver waits for
+					# communication from master
+					# in milliseconds; 0 disables
+<% if @postgresql_conf.has_key?('wal_retrieve_retry_interval') %>wal_retrieve_retry_interval = <%= @postgresql_conf['wal_retrieve_retry_interval'] %><% else %>#wal_retrieve_retry_interval = 5s<% end %>	# time to wait before retrying to
+					# retrieve WAL after a failed attempt
+
+
+#------------------------------------------------------------------------------
+# QUERY TUNING
+#------------------------------------------------------------------------------
+
+# - Planner Method Configuration -
+
+<% if @postgresql_conf.has_key?('enable_bitmapscan') %>enable_bitmapscan = <%= @postgresql_conf['enable_bitmapscan'] %><% else %>#enable_bitmapscan = on<% end %>
+<% if @postgresql_conf.has_key?('enable_hashagg') %>enable_hashagg = <%= @postgresql_conf['enable_hashagg'] %><% else %>#enable_hashagg = on<% end %>
+<% if @postgresql_conf.has_key?('enable_hashjoin') %>enable_hashjoin = <%= @postgresql_conf['enable_hashjoin'] %><% else %>#enable_hashjoin = on<% end %>
+<% if @postgresql_conf.has_key?('enable_indexscan') %>enable_indexscan = <%= @postgresql_conf['enable_indexscan'] %><% else %>#enable_indexscan = on<% end %>
+<% if @postgresql_conf.has_key?('enable_indexonlyscan') %>enable_indexonlyscan = <%= @postgresql_conf['enable_indexonlyscan'] %><% else %>#enable_indexonlyscan = on<% end %>
+<% if @postgresql_conf.has_key?('enable_material') %>enable_material = <%= @postgresql_conf['enable_material'] %><% else %>#enable_material = on<% end %>
+<% if @postgresql_conf.has_key?('enable_mergejoin') %>enable_mergejoin = <%= @postgresql_conf['enable_mergejoin'] %><% else %>#enable_mergejoin = on<% end %>
+<% if @postgresql_conf.has_key?('enable_nestloop') %>enable_nestloop = <%= @postgresql_conf['enable_nestloop'] %><% else %>#enable_nestloop = on<% end %>
+<% if @postgresql_conf.has_key?('enable_seqscan') %>enable_seqscan = <%= @postgresql_conf['enable_seqscan'] %><% else %>#enable_seqscan = on<% end %>
+<% if @postgresql_conf.has_key?('enable_sort') %>enable_sort = <%= @postgresql_conf['enable_sort'] %><% else %>#enable_sort = on<% end %>
+<% if @postgresql_conf.has_key?('enable_tidscan') %>enable_tidscan = <%= @postgresql_conf['enable_tidscan'] %><% else %>#enable_tidscan = on<% end %>
+
+# - Planner Cost Constants -
+
+<% if @postgresql_conf.has_key?('seq_page_cost') %>seq_page_cost = <%= @postgresql_conf['seq_page_cost'] %><% else %>#seq_page_cost = 1.0<% end %>			# measured on an arbitrary scale
+<% if @postgresql_conf.has_key?('random_page_cost') %>random_page_cost = <%= @postgresql_conf['random_page_cost'] %><% else %>#random_page_cost = 4.0<% end %>			# same scale as above
+<% if @postgresql_conf.has_key?('cpu_tuple_cost') %>cpu_tuple_cost = <%= @postgresql_conf['cpu_tuple_cost'] %><% else %>#cpu_tuple_cost = 0.01<% end %>			# same scale as above
+<% if @postgresql_conf.has_key?('cpu_index_tuple_cost') %>cpu_index_tuple_cost = <%= @postgresql_conf['cpu_index_tuple_cost'] %><% else %>#cpu_index_tuple_cost = 0.005<% end %>		# same scale as above
+<% if @postgresql_conf.has_key?('cpu_operator_cost') %>cpu_operator_cost = <%= @postgresql_conf['cpu_operator_cost'] %><% else %>#cpu_operator_cost = 0.0025<% end %>		# same scale as above
+<% if @postgresql_conf.has_key?('effective_cache_size') %>effective_cache_size = <%= @postgresql_conf['effective_cache_size'] %><% else %>#effective_cache_size = 4GB<% end %>
+
+# - Genetic Query Optimizer -
+
+<% if @postgresql_conf.has_key?('geqo') %>geqo = <%= @postgresql_conf['geqo'] %><% else %>#geqo = on<% end %>
+<% if @postgresql_conf.has_key?('geqo_threshold') %>geqo_threshold = <%= @postgresql_conf['geqo_threshold'] %><% else %>#geqo_threshold = 12<% end %>
+<% if @postgresql_conf.has_key?('geqo_effort') %>geqo_effort = <%= @postgresql_conf['geqo_effort'] %><% else %>#geqo_effort = 5<% end %>			# range 1-10
+<% if @postgresql_conf.has_key?('geqo_pool_size') %>geqo_pool_size = <%= @postgresql_conf['geqo_pool_size'] %><% else %>#geqo_pool_size = 0<% end %>			# selects default based on effort
+<% if @postgresql_conf.has_key?('geqo_generations') %>geqo_generations = <%= @postgresql_conf['geqo_generations'] %><% else %>#geqo_generations = 0<% end %>			# selects default based on effort
+<% if @postgresql_conf.has_key?('geqo_selection_bias') %>geqo_selection_bias = <%= @postgresql_conf['geqo_selection_bias'] %><% else %>#geqo_selection_bias = 2.0<% end %>		# range 1.5-2.0
+<% if @postgresql_conf.has_key?('geqo_seed') %>geqo_seed = <%= @postgresql_conf['geqo_seed'] %><% else %>#geqo_seed = 0.0<% end %>			# range 0.0-1.0
+
+# - Other Planner Options -
+
+<% if @postgresql_conf.has_key?('default_statistics_target') %>default_statistics_target = <%= @postgresql_conf['default_statistics_target'] %><% else %>#default_statistics_target = 100<% end %>	# range 1-10000
+<% if @postgresql_conf.has_key?('constraint_exclusion') %>constraint_exclusion = <%= @postgresql_conf['constraint_exclusion'] %><% else %>#constraint_exclusion = partition<% end %>	# on, off, or partition
+<% if @postgresql_conf.has_key?('cursor_tuple_fraction') %>cursor_tuple_fraction = <%= @postgresql_conf['cursor_tuple_fraction'] %><% else %>#cursor_tuple_fraction = 0.1<% end %>		# range 0.0-1.0
+<% if @postgresql_conf.has_key?('from_collapse_limit') %>from_collapse_limit = <%= @postgresql_conf['from_collapse_limit'] %><% else %>#from_collapse_limit = 8<% end %>
+<% if @postgresql_conf.has_key?('join_collapse_limit') %>join_collapse_limit = <%= @postgresql_conf['join_collapse_limit'] %><% else %>#join_collapse_limit = 8<% end %>		# 1 disables collapsing of explicit
+					# JOIN clauses
+
+
+#------------------------------------------------------------------------------
+# ERROR REPORTING AND LOGGING
+#------------------------------------------------------------------------------
+
+# - Where to Log -
+
+<% if @postgresql_conf.has_key?('log_destination') %>log_destination = '<%= @postgresql_conf['log_destination'] %>'<% else %>#log_destination = 'stderr'<% end %>		# Valid values are combinations of
+					# stderr, csvlog, syslog, and eventlog,
+					# depending on platform.  csvlog
+					# requires logging_collector to be on.
+
+# This is used when logging to stderr:
+<% if @postgresql_conf.has_key?('logging_collector') %>logging_collector = <%= @postgresql_conf['logging_collector'] %><% else %>#logging_collector = off<% end %>		# Enable capturing of stderr and csvlog
+					# into log files. Required to be on for
+					# csvlogs.
+					# (change requires restart)
+
+# These are only used if logging_collector is on:
+<% if @postgresql_conf.has_key?('log_directory') %>log_directory = '<%= @postgresql_conf['log_directory'] %>'<% else %>#log_directory = 'pg_log'<% end %>		# directory where log files are written,
+					# can be absolute or relative to PGDATA
+<% if @postgresql_conf.has_key?('log_filename') %>log_filename = '<%= @postgresql_conf['log_filename'] %>'<% else %>#log_filename = 'postgresql-%Y-%m-%d_%H%M%S.log'<% end %>	# log file name pattern,
+					# can include strftime() escapes
+<% if @postgresql_conf.has_key?('log_file_mode') %>log_file_mode = <%= @postgresql_conf['log_file_mode'] %><% else %>#log_file_mode = 0600<% end %>			# creation mode for log files,
+					# begin with 0 to use octal notation
+<% if @postgresql_conf.has_key?('log_truncate_on_rotation') %>log_truncate_on_rotation = <%= @postgresql_conf['log_truncate_on_rotation'] %><% else %>#log_truncate_on_rotation = off<% end %>		# If on, an existing log file with the
+					# same name as the new log file will be
+					# truncated rather than appended to.
+					# But such truncation only occurs on
+					# time-driven rotation, not on restarts
+					# or size-driven rotation.  Default is
+					# off, meaning append to existing files
+					# in all cases.
+<% if @postgresql_conf.has_key?('log_rotation_age') %>log_rotation_age = <%= @postgresql_conf['log_rotation_age'] %><% else %>#log_rotation_age = 1d<% end %>			# Automatic rotation of logfiles will
+					# happen after that time.  0 disables.
+<% if @postgresql_conf.has_key?('log_rotation_size') %>log_rotation_size = <%= @postgresql_conf['log_rotation_size'] %><% else %>#log_rotation_size = 10MB<% end %>		# Automatic rotation of logfiles will
+					# happen after that much log output.
+					# 0 disables.
+
+# These are relevant when logging to syslog:
+<% if @postgresql_conf.has_key?('syslog_facility') %>syslog_facility = '<%= @postgresql_conf['syslog_facility'] %>'<% else %>#syslog_facility = 'LOCAL0'<% end %>
+<% if @postgresql_conf.has_key?('syslog_ident') %>syslog_ident = '<%= @postgresql_conf['syslog_ident'] %>'<% else %>#syslog_ident = 'postgres'<% end %>
+
+# This is only relevant when logging to eventlog (win32):
+# (change requires restart)
+<% if @postgresql_conf.has_key?('event_source') %>event_source = '<%= @postgresql_conf['event_source'] %>'<% else %>#event_source = 'PostgreSQL'<% end %>
+
+# - When to Log -
+
+<% if @postgresql_conf.has_key?('log_min_messages') %>log_min_messages = <%= @postgresql_conf['log_min_messages'] %><% else %>#log_min_messages = warning<% end %>		# values in order of decreasing detail:
+					#   debug5
+					#   debug4
+					#   debug3
+					#   debug2
+					#   debug1
+					#   info
+					#   notice
+					#   warning
+					#   error
+					#   log
+					#   fatal
+					#   panic
+
+<% if @postgresql_conf.has_key?('log_min_error_statement') %>log_min_error_statement = <%= @postgresql_conf['log_min_error_statement'] %><% else %>#log_min_error_statement = error<% end %>	# values in order of decreasing detail:
+					#   debug5
+					#   debug4
+					#   debug3
+					#   debug2
+					#   debug1
+					#   info
+					#   notice
+					#   warning
+					#   error
+					#   log
+					#   fatal
+					#   panic (effectively off)
+
+<% if @postgresql_conf.has_key?('log_min_duration_statement') %>log_min_duration_statement = <%= @postgresql_conf['log_min_duration_statement'] %><% else %>#log_min_duration_statement = -1<% end %>	# -1 is disabled, 0 logs all statements
+					# and their durations, > 0 logs only
+					# statements running at least this number
+					# of milliseconds
+
+
+# - What to Log -
+
+<% if @postgresql_conf.has_key?('debug_print_parse') %>debug_print_parse = <%= @postgresql_conf['debug_print_parse'] %><% else %>#debug_print_parse = off<% end %>
+<% if @postgresql_conf.has_key?('debug_print_rewritten') %>debug_print_rewritten = <%= @postgresql_conf['debug_print_rewritten'] %><% else %>#debug_print_rewritten = off<% end %>
+<% if @postgresql_conf.has_key?('debug_print_plan') %>debug_print_plan = <%= @postgresql_conf['debug_print_plan'] %><% else %>#debug_print_plan = off<% end %>
+<% if @postgresql_conf.has_key?('debug_pretty_print') %>debug_pretty_print = <%= @postgresql_conf['debug_pretty_print'] %><% else %>#debug_pretty_print = on<% end %>
+<% if @postgresql_conf.has_key?('log_checkpoints') %>log_checkpoints = <%= @postgresql_conf['log_checkpoints'] %><% else %>#log_checkpoints = off<% end %>
+<% if @postgresql_conf.has_key?('log_connections') %>log_connections = <%= @postgresql_conf['log_connections'] %><% else %>#log_connections = off<% end %>
+<% if @postgresql_conf.has_key?('log_disconnections') %>log_disconnections = <%= @postgresql_conf['log_disconnections'] %><% else %>#log_disconnections = off<% end %>
+<% if @postgresql_conf.has_key?('log_duration') %>log_duration = <%= @postgresql_conf['log_duration'] %><% else %>#log_duration = off<% end %>
+<% if @postgresql_conf.has_key?('log_error_verbosity') %>log_error_verbosity = <%= @postgresql_conf['log_error_verbosity'] %><% else %>#log_error_verbosity = default<% end %>		# terse, default, or verbose messages
+<% if @postgresql_conf.has_key?('log_hostname') %>log_hostname = <%= @postgresql_conf['log_hostname'] %><% else %>#log_hostname = off<% end %>
+<% if @postgresql_conf.has_key?('log_line_prefix') %>log_line_prefix = '<%= @postgresql_conf['log_line_prefix'] %>'<% else %>#log_line_prefix = ''<% end %>			# special values:
+					#   %a = application name
+					#   %u = user name
+					#   %d = database name
+					#   %r = remote host and port
+					#   %h = remote host
+					#   %p = process ID
+					#   %t = timestamp without milliseconds
+					#   %m = timestamp with milliseconds
+					#   %i = command tag
+					#   %e = SQL state
+					#   %c = session ID
+					#   %l = session line number
+					#   %s = session start timestamp
+					#   %v = virtual transaction ID
+					#   %x = transaction ID (0 if none)
+					#   %q = stop here in non-session
+					#        processes
+					#   %% = '%'
+					# e.g. '<%%u%%%d> '
+<% if @postgresql_conf.has_key?('log_lock_waits') %>log_lock_waits = <%= @postgresql_conf['log_lock_waits'] %><% else %>#log_lock_waits = off<% end %>			# log lock waits >= deadlock_timeout
+<% if @postgresql_conf.has_key?('log_statement') %>log_statement = '<%= @postgresql_conf['log_statement'] %>'<% else %>#log_statement = 'none'<% end %>			# none, ddl, mod, all
+<% if @postgresql_conf.has_key?('log_replication_commands') %>log_replication_commands = <%= @postgresql_conf['log_replication_commands'] %><% else %>#log_replication_commands = off<% end %>
+<% if @postgresql_conf.has_key?('log_temp_files') %>log_temp_files = <%= @postgresql_conf['log_temp_files'] %><% else %>#log_temp_files = -1<% end %>			# log temporary files equal or larger
+					# than the specified size in kilobytes;
+					# -1 disables, 0 logs all temp files
+<% if @postgresql_conf.has_key?('log_timezone') %>log_timezone = '<%= @postgresql_conf['log_timezone'] %>'<% else %>#log_timezone = 'GMT'<% end %>
+
+
+# - Process Title -
+
+<% if @postgresql_conf.has_key?('cluster_name') %>cluster_name = '<%= @postgresql_conf['cluster_name'] %>'<% else %>#cluster_name = ''<% end %>			# added to process titles if nonempty
+					# (change requires restart)
+<% if @postgresql_conf.has_key?('update_process_title') %>update_process_title = <%= @postgresql_conf['update_process_title'] %><% else %>#update_process_title = on<% end %>
+
+
+#------------------------------------------------------------------------------
+# RUNTIME STATISTICS
+#------------------------------------------------------------------------------
+
+# - Query/Index Statistics Collector -
+
+<% if @postgresql_conf.has_key?('track_activities') %>track_activities = <%= @postgresql_conf['track_activities'] %><% else %>#track_activities = on<% end %>
+<% if @postgresql_conf.has_key?('track_counts') %>track_counts = <%= @postgresql_conf['track_counts'] %><% else %>#track_counts = on<% end %>
+<% if @postgresql_conf.has_key?('track_io_timing') %>track_io_timing = <%= @postgresql_conf['track_io_timing'] %><% else %>#track_io_timing = off<% end %>
+<% if @postgresql_conf.has_key?('track_functions') %>track_functions = <%= @postgresql_conf['track_functions'] %><% else %>#track_functions = none<% end %>			# none, pl, all
+<% if @postgresql_conf.has_key?('track_activity_query_size') %>track_activity_query_size = <%= @postgresql_conf['track_activity_query_size'] %><% else %>#track_activity_query_size = 1024<% end %>	# (change requires restart)
+<% if @postgresql_conf.has_key?('stats_temp_directory') %>stats_temp_directory = '<%= @postgresql_conf['stats_temp_directory'] %>'<% else %>#stats_temp_directory = 'pg_stat_tmp'<% end %>
+
+
+# - Statistics Monitoring -
+
+<% if @postgresql_conf.has_key?('log_parser_stats') %>log_parser_stats = <%= @postgresql_conf['log_parser_stats'] %><% else %>#log_parser_stats = off<% end %>
+<% if @postgresql_conf.has_key?('log_planner_stats') %>log_planner_stats = <%= @postgresql_conf['log_planner_stats'] %><% else %>#log_planner_stats = off<% end %>
+<% if @postgresql_conf.has_key?('log_executor_stats') %>log_executor_stats = <%= @postgresql_conf['log_executor_stats'] %><% else %>#log_executor_stats = off<% end %>
+<% if @postgresql_conf.has_key?('log_statement_stats') %>log_statement_stats = <%= @postgresql_conf['log_statement_stats'] %><% else %>#log_statement_stats = off<% end %>
+
+
+#------------------------------------------------------------------------------
+# AUTOVACUUM PARAMETERS
+#------------------------------------------------------------------------------
+
+<% if @postgresql_conf.has_key?('autovacuum') %>autovacuum = <%= @postgresql_conf['autovacuum'] %><% else %>#autovacuum = on<% end %>			# Enable autovacuum subprocess?  'on'
+					# requires track_counts to also be on.
+<% if @postgresql_conf.has_key?('log_autovacuum_min_duration') %>log_autovacuum_min_duration = <%= @postgresql_conf['log_autovacuum_min_duration'] %><% else %>#log_autovacuum_min_duration = -1<% end %>	# -1 disables, 0 logs all actions and
+					# their durations, > 0 logs only
+					# actions running at least this number
+					# of milliseconds.
+<% if @postgresql_conf.has_key?('autovacuum_max_workers') %>autovacuum_max_workers = <%= @postgresql_conf['autovacuum_max_workers'] %><% else %>#autovacuum_max_workers = 3<% end %>		# max number of autovacuum subprocesses
+					# (change requires restart)
+<% if @postgresql_conf.has_key?('autovacuum_naptime') %>autovacuum_naptime = <%= @postgresql_conf['autovacuum_naptime'] %><% else %>#autovacuum_naptime = 1min<% end %>		# time between autovacuum runs
+<% if @postgresql_conf.has_key?('autovacuum_vacuum_threshold') %>autovacuum_vacuum_threshold = <%= @postgresql_conf['autovacuum_vacuum_threshold'] %><% else %>#autovacuum_vacuum_threshold = 50<% end %>	# min number of row updates before
+					# vacuum
+<% if @postgresql_conf.has_key?('autovacuum_analyze_threshold') %>autovacuum_analyze_threshold = <%= @postgresql_conf['autovacuum_analyze_threshold'] %><% else %>#autovacuum_analyze_threshold = 50<% end %>	# min number of row updates before
+					# analyze
+<% if @postgresql_conf.has_key?('autovacuum_vacuum_scale_factor') %>autovacuum_vacuum_scale_factor = <%= @postgresql_conf['autovacuum_vacuum_scale_factor'] %><% else %>#autovacuum_vacuum_scale_factor = 0.2<% end %>	# fraction of table size before vacuum
+<% if @postgresql_conf.has_key?('autovacuum_analyze_scale_factor') %>autovacuum_analyze_scale_factor = <%= @postgresql_conf['autovacuum_analyze_scale_factor'] %><% else %>#autovacuum_analyze_scale_factor = 0.1<% end %>	# fraction of table size before analyze
+<% if @postgresql_conf.has_key?('autovacuum_freeze_max_age') %>autovacuum_freeze_max_age = <%= @postgresql_conf['autovacuum_freeze_max_age'] %><% else %>#autovacuum_freeze_max_age = 200000000<% end %>	# maximum XID age before forced vacuum
+					# (change requires restart)
+<% if @postgresql_conf.has_key?('autovacuum_multixact_freeze_max_age') %>autovacuum_multixact_freeze_max_age = <%= @postgresql_conf['autovacuum_multixact_freeze_max_age'] %><% else %>#autovacuum_multixact_freeze_max_age = 400000000<% end %>	# maximum multixact age
+					# before forced vacuum
+					# (change requires restart)
+<% if @postgresql_conf.has_key?('autovacuum_vacuum_cost_delay') %>autovacuum_vacuum_cost_delay = <%= @postgresql_conf['autovacuum_vacuum_cost_delay'] %><% else %>#autovacuum_vacuum_cost_delay = 20ms<% end %>	# default vacuum cost delay for
+					# autovacuum, in milliseconds;
+					# -1 means use vacuum_cost_delay
+<% if @postgresql_conf.has_key?('autovacuum_vacuum_cost_limit') %>autovacuum_vacuum_cost_limit = <%= @postgresql_conf['autovacuum_vacuum_cost_limit'] %><% else %>#autovacuum_vacuum_cost_limit = -1<% end %>	# default vacuum cost limit for
+					# autovacuum, -1 means use
+					# vacuum_cost_limit
+
+
+#------------------------------------------------------------------------------
+# CLIENT CONNECTION DEFAULTS
+#------------------------------------------------------------------------------
+
+# - Statement Behavior -
+
+<% if @postgresql_conf.has_key?('client_min_messages') %>client_min_messages = <%= @postgresql_conf['client_min_messages'] %><% else %>#client_min_messages = notice<% end %>		# values in order of decreasing detail:
+					#   debug5
+					#   debug4
+					#   debug3
+					#   debug2
+					#   debug1
+					#   log
+					#   notice
+					#   warning
+					#   error
+<% if @postgresql_conf.has_key?('search_path') %>search_path = '<%= @postgresql_conf['search_path'] %>'<% else %>#search_path = '"$user", public'<% end %>	# schema names
+<% if @postgresql_conf.has_key?('default_tablespace') %>default_tablespace = '<%= @postgresql_conf['default_tablespace'] %>'<% else %>#default_tablespace = ''<% end %>		# a tablespace name, '' uses the default
+<% if @postgresql_conf.has_key?('temp_tablespaces') %>temp_tablespaces = '<%= @postgresql_conf['temp_tablespaces'] %>'<% else %>#temp_tablespaces = ''<% end %>			# a list of tablespace names, '' uses
+					# only default tablespace
+<% if @postgresql_conf.has_key?('check_function_bodies') %>check_function_bodies = <%= @postgresql_conf['check_function_bodies'] %><% else %>#check_function_bodies = on<% end %>
+<% if @postgresql_conf.has_key?('default_transaction_isolation') %>default_transaction_isolation = '<%= @postgresql_conf['default_transaction_isolation'] %>'<% else %>#default_transaction_isolation = 'read committed'<% end %>
+<% if @postgresql_conf.has_key?('default_transaction_read_only') %>default_transaction_read_only = <%= @postgresql_conf['default_transaction_read_only'] %><% else %>#default_transaction_read_only = off<% end %>
+<% if @postgresql_conf.has_key?('default_transaction_deferrable') %>default_transaction_deferrable = <%= @postgresql_conf['default_transaction_deferrable'] %><% else %>#default_transaction_deferrable = off<% end %>
+<% if @postgresql_conf.has_key?('session_replication_role') %>session_replication_role = '<%= @postgresql_conf['session_replication_role'] %>'<% else %>#session_replication_role = 'origin'<% end %>
+<% if @postgresql_conf.has_key?('statement_timeout') %>statement_timeout = <%= @postgresql_conf['statement_timeout'] %><% else %>#statement_timeout = 0<% end %>			# in milliseconds, 0 is disabled
+<% if @postgresql_conf.has_key?('lock_timeout') %>lock_timeout = <%= @postgresql_conf['lock_timeout'] %><% else %>#lock_timeout = 0<% end %>			# in milliseconds, 0 is disabled
+<% if @postgresql_conf.has_key?('vacuum_freeze_min_age') %>vacuum_freeze_min_age = <%= @postgresql_conf['vacuum_freeze_min_age'] %><% else %>#vacuum_freeze_min_age = 50000000<% end %>
+<% if @postgresql_conf.has_key?('vacuum_freeze_table_age') %>vacuum_freeze_table_age = <%= @postgresql_conf['vacuum_freeze_table_age'] %><% else %>#vacuum_freeze_table_age = 150000000<% end %>
+<% if @postgresql_conf.has_key?('vacuum_multixact_freeze_min_age') %>vacuum_multixact_freeze_min_age = <%= @postgresql_conf['vacuum_multixact_freeze_min_age'] %><% else %>#vacuum_multixact_freeze_min_age = 5000000<% end %>
+<% if @postgresql_conf.has_key?('vacuum_multixact_freeze_table_age') %>vacuum_multixact_freeze_table_age = <%= @postgresql_conf['vacuum_multixact_freeze_table_age'] %><% else %>#vacuum_multixact_freeze_table_age = 150000000<% end %>
+<% if @postgresql_conf.has_key?('bytea_output') %>bytea_output = '<%= @postgresql_conf['bytea_output'] %>'<% else %>#bytea_output = 'hex'<% end %>			# hex, escape
+<% if @postgresql_conf.has_key?('xmlbinary') %>xmlbinary = '<%= @postgresql_conf['xmlbinary'] %>'<% else %>#xmlbinary = 'base64'<% end %>
+<% if @postgresql_conf.has_key?('xmloption') %>xmloption = '<%= @postgresql_conf['xmloption'] %>'<% else %>#xmloption = 'content'<% end %>
+<% if @postgresql_conf.has_key?('gin_fuzzy_search_limit') %>gin_fuzzy_search_limit = <%= @postgresql_conf['gin_fuzzy_search_limit'] %><% else %>#gin_fuzzy_search_limit = 0<% end %>
+<% if @postgresql_conf.has_key?('gin_pending_list_limit') %>gin_pending_list_limit = <%= @postgresql_conf['gin_pending_list_limit'] %><% else %>#gin_pending_list_limit = 4MB<% end %>
+
+# - Locale and Formatting -
+
+<% if @postgresql_conf.has_key?('datestyle') %>datestyle = '<%= @postgresql_conf['datestyle'] %>'<% else %>#datestyle = 'iso, mdy'<% end %>
+<% if @postgresql_conf.has_key?('intervalstyle') %>intervalstyle = '<%= @postgresql_conf['intervalstyle'] %>'<% else %>#intervalstyle = 'postgres'<% end %>
+<% if @postgresql_conf.has_key?('timezone') %>timezone = '<%= @postgresql_conf['timezone'] %>'<% else %>#timezone = 'GMT'<% end %>
+<% if @postgresql_conf.has_key?('timezone_abbreviations') %>timezone_abbreviations = '<%= @postgresql_conf['timezone_abbreviations'] %>'<% else %>#timezone_abbreviations = 'Default'<% end %>     # Select the set of available time zone
+					# abbreviations.  Currently, there are
+					#   Default
+					#   Australia (historical usage)
+					#   India
+					# You can create your own file in
+					# share/timezonesets/.
+<% if @postgresql_conf.has_key?('extra_float_digits') %>extra_float_digits = <%= @postgresql_conf['extra_float_digits'] %><% else %>#extra_float_digits = 0<% end %>			# min -15, max 3
+<% if @postgresql_conf.has_key?('client_encoding') %>client_encoding = <%= @postgresql_conf['client_encoding'] %><% else %>#client_encoding = sql_ascii<% end %>		# actually, defaults to database
+					# encoding
+
+# These settings are initialized by initdb, but they can be changed.
+<% if @postgresql_conf.has_key?('lc_messages') %>lc_messages = '<%= @postgresql_conf['lc_messages'] %>'<% else %>#lc_messages = 'C'<% end %>			# locale for system error message
+					# strings
+<% if @postgresql_conf.has_key?('lc_monetary') %>lc_monetary = '<%= @postgresql_conf['lc_monetary'] %>'<% else %>#lc_monetary = 'C'<% end %>			# locale for monetary formatting
+<% if @postgresql_conf.has_key?('lc_numeric') %>lc_numeric = '<%= @postgresql_conf['lc_numeric'] %>'<% else %>#lc_numeric = 'C'<% end %>			# locale for number formatting
+<% if @postgresql_conf.has_key?('lc_time') %>lc_time = '<%= @postgresql_conf['lc_time'] %>'<% else %>#lc_time = 'C'<% end %>				# locale for time formatting
+
+# default configuration for text search
+<% if @postgresql_conf.has_key?('default_text_search_config') %>default_text_search_config = '<%= @postgresql_conf['default_text_search_config'] %>'<% else %>#default_text_search_config = 'pg_catalog.simple'<% end %>
+
+# - Other Defaults -
+
+<% if @postgresql_conf.has_key?('dynamic_library_path') %>dynamic_library_path = '<%= @postgresql_conf['dynamic_library_path'] %>'<% else %>#dynamic_library_path = '$libdir'<% end %>
+<% if @postgresql_conf.has_key?('local_preload_libraries') %>local_preload_libraries = '<%= @postgresql_conf['local_preload_libraries'] %>'<% else %>#local_preload_libraries = ''<% end %>
+<% if @postgresql_conf.has_key?('session_preload_libraries') %>session_preload_libraries = '<%= @postgresql_conf['session_preload_libraries'] %>'<% else %>#session_preload_libraries = ''<% end %>
+
+
+#------------------------------------------------------------------------------
+# LOCK MANAGEMENT
+#------------------------------------------------------------------------------
+
+<% if @postgresql_conf.has_key?('deadlock_timeout') %>deadlock_timeout = <%= @postgresql_conf['deadlock_timeout'] %><% else %>#deadlock_timeout = 1s<% end %>
+<% if @postgresql_conf.has_key?('max_locks_per_transaction') %>max_locks_per_transaction = <%= @postgresql_conf['max_locks_per_transaction'] %><% else %>#max_locks_per_transaction = 64<% end %>		# min 10
+					# (change requires restart)
+<% if @postgresql_conf.has_key?('max_pred_locks_per_transaction') %>max_pred_locks_per_transaction = <%= @postgresql_conf['max_pred_locks_per_transaction'] %><% else %>#max_pred_locks_per_transaction = 64<% end %>	# min 10
+					# (change requires restart)
+
+
+#------------------------------------------------------------------------------
+# VERSION/PLATFORM COMPATIBILITY
+#------------------------------------------------------------------------------
+
+# - Previous PostgreSQL Versions -
+
+<% if @postgresql_conf.has_key?('array_nulls') %>array_nulls = <%= @postgresql_conf['array_nulls'] %><% else %>#array_nulls = on<% end %>
+<% if @postgresql_conf.has_key?('backslash_quote') %>backslash_quote = <%= @postgresql_conf['backslash_quote'] %><% else %>#backslash_quote = safe_encoding<% end %>	# on, off, or safe_encoding
+<% if @postgresql_conf.has_key?('default_with_oids') %>default_with_oids = <%= @postgresql_conf['default_with_oids'] %><% else %>#default_with_oids = off<% end %>
+<% if @postgresql_conf.has_key?('escape_string_warning') %>escape_string_warning = <%= @postgresql_conf['escape_string_warning'] %><% else %>#escape_string_warning = on<% end %>
+<% if @postgresql_conf.has_key?('lo_compat_privileges') %>lo_compat_privileges = <%= @postgresql_conf['lo_compat_privileges'] %><% else %>#lo_compat_privileges = off<% end %>
+<% if @postgresql_conf.has_key?('operator_precedence_warning') %>operator_precedence_warning = <%= @postgresql_conf['operator_precedence_warning'] %><% else %>#operator_precedence_warning = off<% end %>
+<% if @postgresql_conf.has_key?('quote_all_identifiers') %>quote_all_identifiers = <%= @postgresql_conf['quote_all_identifiers'] %><% else %>#quote_all_identifiers = off<% end %>
+<% if @postgresql_conf.has_key?('sql_inheritance') %>sql_inheritance = <%= @postgresql_conf['sql_inheritance'] %><% else %>#sql_inheritance = on<% end %>
+<% if @postgresql_conf.has_key?('standard_conforming_strings') %>standard_conforming_strings = <%= @postgresql_conf['standard_conforming_strings'] %><% else %>#standard_conforming_strings = on<% end %>
+<% if @postgresql_conf.has_key?('synchronize_seqscans') %>synchronize_seqscans = <%= @postgresql_conf['synchronize_seqscans'] %><% else %>#synchronize_seqscans = on<% end %>
+
+# - Other Platforms and Clients -
+
+<% if @postgresql_conf.has_key?('transform_null_equals') %>transform_null_equals = <%= @postgresql_conf['transform_null_equals'] %><% else %>#transform_null_equals = off<% end %>
+
+
+#------------------------------------------------------------------------------
+# ERROR HANDLING
+#------------------------------------------------------------------------------
+
+<% if @postgresql_conf.has_key?('exit_on_error') %>exit_on_error = <%= @postgresql_conf['exit_on_error'] %><% else %>#exit_on_error = off<% end %>			# terminate session on any error?
+<% if @postgresql_conf.has_key?('restart_after_crash') %>restart_after_crash = <%= @postgresql_conf['restart_after_crash'] %><% else %>#restart_after_crash = on<% end %>		# reinitialize after backend crash?
+<% if @postgresql_conf.has_key?('data_sync_retry') %>data_sync_retry = <%= @postgresql_conf['data_sync_retry'] %><% else %>#data_sync_retry = off<% end %>			# retry or panic on failure to fsync
+					# data?
+					# (change requires restart)
+
+
+#------------------------------------------------------------------------------
+# CONFIG FILE INCLUDES
+#------------------------------------------------------------------------------
+
+# These options allow settings to be loaded from files other than the
+# default postgresql.conf.  Note that these are directives, not variable
+# assignments, so they can usefully be given more than once.
+
+<% if @postgresql_conf.has_key?('include_dir') %>include_dir = '<%= @postgresql_conf['include_dir'] %>'<% else %>#include_dir = '...'<% end %>			# include files ending in '.conf' from
+					# a directory, e.g., 'conf.d'
+<% if @postgresql_conf.has_key?('include_if_exists') %>include_if_exists = '<%= @postgresql_conf['include_if_exists'] %>'<% else %>#include_if_exists = '...'<% end %>		# include file only if it exists
+<% if @postgresql_conf.has_key?('include') %>include = '<%= @postgresql_conf['include'] %>'<% else %>#include = '...'<% end %>			# include file
+
+
+#------------------------------------------------------------------------------
+# CUSTOMIZED OPTIONS
+#------------------------------------------------------------------------------
+
+# Add settings for extensions here
