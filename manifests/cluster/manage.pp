@@ -53,7 +53,7 @@ define postgresql::cluster::manage (
 
     $cfg                  = $config['postgresql_conf']
     $postgresql_conf      = deep_merge($config['postgresql_conf'], $postgresql_override )
-    $postgresql_hba       = sort(deep_merge($postgresql::params::default_hba,    $config['pg_hba_conf']))
+    $postgresql_hba       = deep_merge($postgresql::params::default_hba,    $config['pg_hba_conf'])
     $pg_ident             = deep_merge($postgresql::params::default_ident,  $config['pg_ident_conf'])
 
     ### Create configs and cluster
