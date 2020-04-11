@@ -593,3 +593,8 @@
 #------------------------------------------------------------------------------
 
 # Add settings for extensions here
+<% @postgresql_extensions.map do | name,  content | -%>
+# <%= name %>
+<%= content %>
+
+<% end -%>

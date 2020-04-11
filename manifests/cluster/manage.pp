@@ -40,8 +40,8 @@ define postgresql::cluster::manage (
         true    => $cluster_data['pg_ident_conf'],
         default => {}
       },
-      'confd'   => has_key($cluster_data, 'confd') ? {
-        true    => $cluster_data['confd'],
+      'postgresql_extensions'   => has_key($cluster_data, 'postgresql_extensions') ? {
+        true    => $cluster_data['postgresql_extensions'],
         default => {}
       },
     }
@@ -55,20 +55,20 @@ define postgresql::cluster::manage (
       'include_dir'       => 'conf.d',
     }
 
-    $cfg                  = $config['postgresql_conf']
-    $postgresql_conf      = deep_merge($config['postgresql_conf'], $postgresql_override )
-    $postgresql_hba       = deep_merge($postgresql::params::default_hba,    $config['pg_hba_conf'])
-    $pg_ident             = deep_merge($postgresql::params::default_ident,  $config['pg_ident_conf'])
-    $confd                = $config['confd']
+    $cfg                    = $config['postgresql_conf']
+    $postgresql_conf        = deep_merge($config['postgresql_conf'], $postgresql_override )
+    $postgresql_hba         = deep_merge($postgresql::params::default_hba,    $config['pg_hba_conf'])
+    $pg_ident               = deep_merge($postgresql::params::default_ident,  $config['pg_ident_conf'])
+    $postgresql_extensions  = $config['postgresql_extensions']
 
-    $confd.each | $config, $content | {
-      postgresql::confd {"$cluster/$version/$config":
-        filename  => $config,
-        version   => $version,
-        cluster   => $cluster,
-        content   => $content
-      }
-    }
+    # $confd.each | $config, $content | {
+    #   postgresql::confd {"$cluster/$version/$config":
+    #     filename  => $config,
+    #     version   => $version,
+    #     cluster   => $cluster,
+    #     content   => $content
+    #   }
+    # }
 
     ### Create configs and cluster
     exec { "postgresql::cluster::create $version/$cluster":
