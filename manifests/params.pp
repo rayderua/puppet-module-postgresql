@@ -10,10 +10,10 @@ class postgresql::params {
   $allowed_start            = ['auto', 'manual', 'disabled']
 
   $default_hba = {
-    '1001' => { 'type' => 'local', 'database' => 'all', 'user' => 'postgres', 'auth_method' => 'peer' },
-    '1002' => { 'type' => 'local', 'database' => 'all', 'user' => 'all', 'auth_method' => 'peer' },
-    '1003' => { 'type' => 'host',  'database' => 'all', 'user' => 'all', 'address' => '127.0.0.1/32', 'auth_method'           => 'md5' },
-    '1004' => { 'type' => 'host',  'database' => 'all', 'user' => 'all', 'address' => '::1/128', 'auth_method' => 'md5' },
+    'default_001' => { 'type' => 'local', 'database' => 'all', 'user' => 'postgres', 'auth_method' => 'peer' },
+    'default_002' => { 'type' => 'local', 'database' => 'all', 'user' => 'all', 'auth_method' => 'peer' },
+    'default_003' => { 'type' => 'host',  'database' => 'all', 'user' => 'all', 'address' => '127.0.0.1/32', 'auth_method'           => 'md5' },
+    'default_004' => { 'type' => 'host',  'database' => 'all', 'user' => 'all', 'address' => '::1/128', 'auth_method' => 'md5' },
   }
 
   $default_ident = {}
