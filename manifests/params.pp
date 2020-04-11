@@ -10,13 +10,10 @@ class postgresql::params {
   $allowed_start            = ['auto', 'manual', 'disabled']
 
   $default_hba = {
-    '999_default_001' => { 'type' => 'local', 'database' => 'all', 'user' => 'postgres', 'auth_method' => 'trust' },
-    '999_default_002' => { 'type' => 'local', 'database' => 'all', 'user' => 'all', 'auth_method' => 'peer' },
-    '999_default_003' => { 'type' => 'host',  'database' => 'all', 'user' => 'all', 'address' => '127.0.0.1/32', 'auth_method'           => 'md5' },
-    '999_default_004' => { 'type' => 'host',  'database' => 'all', 'user' => 'all', 'address' => '::1/128', 'auth_method' => 'md5' },
-    '999_default_005' => { 'type' => 'local', 'database' => 'replication', 'user' => 'all', 'auth_method' => 'peer' },
-    '999_default_006' => { 'type' => 'host',  'database' => 'replication', 'user' => 'all', 'address' => '127.0.0.1/32', 'auth_method'           => 'md5' },
-    '999_default_007' => { 'type' => 'host',  'database' => 'replication', 'user' => 'all', 'address' => '::1/128', 'auth_method'           => 'md5' },
+    '0001' => { 'type' => 'local', 'database' => 'all', 'user' => 'postgres', 'auth_method' => 'peer' },
+    '0002' => { 'type' => 'local', 'database' => 'all', 'user' => 'all', 'auth_method' => 'peer' },
+    '0003' => { 'type' => 'host',  'database' => 'all', 'user' => 'all', 'address' => '127.0.0.1/32', 'auth_method'           => 'md5' },
+    '0004' => { 'type' => 'host',  'database' => 'all', 'user' => 'all', 'address' => '::1/128', 'auth_method' => 'md5' },
   }
 
   $default_ident = {}
