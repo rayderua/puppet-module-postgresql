@@ -83,7 +83,7 @@
 <% if @postgresql_conf.has_key?('ssl') %>ssl = <%= @postgresql_conf['ssl'] %><% else %>#ssl = off<% end %>				# (change requires restart)
 <% if @postgresql_conf.has_key?('ssl_ciphers') %>ssl_ciphers = '<%= @postgresql_conf['ssl_ciphers'] %>'<% else %>#ssl_ciphers = 'DEFAULT:!LOW:!EXP:!MD5:@STRENGTH'<% end %>	# allowed SSL ciphers
 					# (change requires restart)
-<% if @postgresql_conf.has_key?('ssl_renegotiation_limit') %>ssl_renegotiation_limit = <%= @postgresql_conf['ssl_renegotiation_limit'] %><% else %>#ssl_renegotiation_limit = 0<% end %>		# amount of data between renegotiations
+<% if @postgresql_conf.has_key?('ssl_renegotiation_limit') %>ssl_renegotiation_limit = <%= @postgresql_conf['ssl_renegotiation_limit'] %><% else %>#ssl_renegotiation_limit = 512MB<% end %>		# amount of data between renegotiations
 <% if @postgresql_conf.has_key?('ssl_cert_file') %>ssl_cert_file = '<%= @postgresql_conf['ssl_cert_file'] %>'<% else %>#ssl_cert_file = 'server.crt'<% end %>		# (change requires restart)
 <% if @postgresql_conf.has_key?('ssl_key_file') %>ssl_key_file = '<%= @postgresql_conf['ssl_key_file'] %>'<% else %>#ssl_key_file = 'server.key'<% end %>		# (change requires restart)
 <% if @postgresql_conf.has_key?('ssl_ca_file') %>ssl_ca_file = '<%= @postgresql_conf['ssl_ca_file'] %>'<% else %>#ssl_ca_file = ''<% end %>			# (change requires restart)

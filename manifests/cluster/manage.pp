@@ -47,7 +47,7 @@ define postgresql::cluster::manage (
     }
 
     $postgresql_override = {
-      'data_directory'    => "/var/lib/postgresql/$version/$cluster/",
+      'data_directory'    => "/var/lib/postgresql/$version/$cluster",
       'hba_file'          => "/etc/postgresql/$version/$cluster/pg_hba.conf",
       'ident_file'        => "/etc/postgresql/$version/$cluster/pg_ident.conf",
       'external_pid_file' => "/var/run/postgresql/$version-$cluster.pid",
